@@ -10,6 +10,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 
 import './App.css'
+import HomePage from "./pages/HomePage.jsx";
+import RiadDetail from "./pages/RiadDetail.jsx";
+import Header from "./components/Riad/Header.jsx";
+import RiadList from "./components/Riad/RiadList.jsx";
+import Incentive from "./components/Riad/Incentive.jsx";
 
 function App() {
   const queryClient = new QueryClient();
@@ -20,9 +25,11 @@ function App() {
     <OpenProvider>
     <BrowserRouter>
     <Routes>
+      <Route path='/' element={<HomePage />}/>
       <Route path='/register' element={<Register/>}/>
       <Route path='/Login' element={<Login/>}/>
       <Route path='/admin/Riads' element={<RiadsAdmin/>}/>
+      <Route path='/riad/:id' element={<RiadDetail />}/>
     </Routes>
     </BrowserRouter>
     </OpenProvider>
