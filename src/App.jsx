@@ -11,6 +11,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 
 import './App.css'
+import Test from './components/Test';
 
 function App() {
   const queryClient = new QueryClient();
@@ -24,7 +25,9 @@ function App() {
       <Route path='/register' element={<Register/>}/>
       <Route path='/Login' element={<Login/>}/>
       <Route path='/admin/Riads' element={<RiadsAdmin/>}/>
+      {<Route path='/admin/Rooms' element={<RiadsAdmin/>}/> }
       <Route path='/forgotPassword' element={<ForgotPassword/>}/>
+      <Route path='/test' element={<Test />}/>
     </Routes>
     </BrowserRouter>
     </OpenProvider>

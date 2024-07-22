@@ -1,38 +1,39 @@
-import React, { useContext } from 'react';
+import React , {useContext}from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { OpenContext } from '../../../contexts/OpenContext';
 import axios from 'axios';
 import * as yup from 'yup';
+import { OpenContext } from '../../../contexts/OpenContext';
 
 const schema = yup.object().shape({
   name: yup.string().required('Name is required').max(100, 'Name cannot exceed 100 characters'),
   description: yup.string().required('Description is required').max(500, 'Description cannot exceed 500 characters'),
-  address: yup.string().required('Address is required').max(200, 'Address cannot exceed 200 characters'),
-  city: yup.string().required('City is required').max(100, 'City cannot exceed 100 characters'),
+  nb_personne: yup.number().required('Number of people is required').positive().integer(),
+  price: yup.number().required('Price is required').positive(),
+  id_riad: yup.string().required('Riad ID is required'),
 });
 
-const addRiad = async (riad) => {
-  const response = await axios.post('http://localhost:3999/Riads', riad);
+const addRoom = async (room) => {
+  const response = await axios.post('http://localhost:3999/Rooms', room);
   return response.data;
 };
 
-const AddRiad = () => {
+const AddRoom = () => {
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
-  const {setOpen} = useContext(OpenContext);
-  const queryClient = useQueryClient();
 
+  const queryClient = useQueryClient();
+  const  {setOpen} = useContext(OpenContext)
   const mutation = useMutation({
-    mutationFn: addRiad,
+    mutationFn: addRoom,
     onSuccess: () => {
-      queryClient.invalidateQueries(['riads']);
+      queryClient.invalidateQueries(['rooms']);
       setOpen(false); // Use the setOpen function to close the modal
     },
     onError: (error) => {
-      console.error('Adding riad failed:', error);
+      console.error('Adding room failed:', error);
     }
   });
 
@@ -45,7 +46,7 @@ const AddRiad = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-12">
           <div className="border-b border-gray-900/10 pb-12">
-            <p className="mt-1 text-sm leading-6 text-gray-600">Enter the details of the new riad below.</p>
+            <p className="mt-1 text-sm leading-6 text-gray-600">Enter the details of the new room below.</p>
 
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-3">
@@ -79,35 +80,51 @@ const AddRiad = () => {
                 </div>
               </div>
 
-              <div className="sm:col-span-6">
-                <label htmlFor="address" className="block text-sm font-medium leading-6 text-gray-900">
-                  Address
+              <div className="sm:col-span-3">
+                <label htmlFor="nb_personne" className="block text-sm font-medium leading-6 text-gray-900">
+                  Number of People
                 </label>
                 <div className="mt-2">
                   <input
-                    type="text"
-                    name="address"
-                    id="address"
+                    type="number"
+                    name="nb_personne"
+                    id="nb_personne"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    {...register("address")}
+                    {...register("nb_personne")}
                   />
-                  {errors.address && <p className="mt-2 text-sm text-red-600">{errors.address.message}</p>}
+                  {errors.nb_personne && <p className="mt-2 text-sm text-red-600">{errors.nb_personne.message}</p>}
+                </div>
+              </div>
+
+              <div className="sm:col-span-3">
+                <label htmlFor="price" className="block text-sm font-medium leading-6 text-gray-900">
+                  Price
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="number"
+                    name="price"
+                    id="price"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    {...register("price")}
+                  />
+                  {errors.price && <p className="mt-2 text-sm text-red-600">{errors.price.message}</p>}
                 </div>
               </div>
 
               <div className="sm:col-span-6">
-                <label htmlFor="city" className="block text-sm font-medium leading-6 text-gray-900">
-                  City
+                <label htmlFor="id_riad" className="block text-sm font-medium leading-6 text-gray-900">
+                  Riad ID
                 </label>
                 <div className="mt-2">
                   <input
                     type="text"
-                    name="city"
-                    id="city"
+                    name="id_riad"
+                    id="id_riad"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    {...register("city")}
+                    {...register("id_riad")}
                   />
-                  {errors.city && <p className="mt-2 text-sm text-red-600">{errors.city.message}</p>}
+                  {errors.id_riad && <p className="mt-2 text-sm text-red-600">{errors.id_riad.message}</p>}
                 </div>
               </div>
             </div>
@@ -115,7 +132,7 @@ const AddRiad = () => {
         </div>
 
         <div className="mt-6 flex items-center justify-end gap-x-6">
-          <button type="button" className="text-sm font-semibold leading-6 text-gray-900" onClick={() => setOpen(false)} >Cancel</button>
+          <button type="button" className="text-sm font-semibold leading-6 text-gray-900" onClick={()=>{setOpen(false)}}>Cancel</button>
           <button
             type="submit"
             className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -128,4 +145,4 @@ const AddRiad = () => {
   );
 };
 
-export default AddRiad;
+export default AddRoom;

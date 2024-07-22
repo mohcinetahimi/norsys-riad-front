@@ -11,6 +11,7 @@ import {
 } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Table from '../components/Admin/Tables/Riadtable'
+import RoomTable from '../components/Admin/Tables/Roomtable'
 
 const user = {
   name: 'Tom Cook',
@@ -35,7 +36,15 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
+const pathname = window.location.pathname;
+
+// Determine which component to render based on the URL
+const isRoomPage = pathname.includes('/Rooms');
+const isRiadPage = pathname.includes('/Riads');
+
 export default function Riads() {
+
+  
   return (
     <>
       {/*
@@ -208,7 +217,8 @@ export default function Riads() {
           <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">{/* Your content */}</div>
         </main>
       </div>
-      <Table></Table>
+
+      {isRoomPage ? <RoomTable /> : isRiadPage ? <Table /> : <div>Select a page</div>}
 
 
     </>
