@@ -12,6 +12,7 @@ import {
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Table from '../components/Admin/Tables/Riadtable'
 import RoomTable from '../components/Admin/Tables/Roomtable'
+import {Link,useLocation} from 'react-router-dom'
 
 const user = {
   name: 'Tom Cook',
@@ -19,13 +20,7 @@ const user = {
   imageUrl:
     'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
 }
-const navigation = [
-  { name: 'Dashboard', href: '#', current: true },
-  { name: 'Team', href: '#', current: false },
-  { name: 'Projects', href: '#', current: false },
-  { name: 'Calendar', href: '#', current: false },
-  { name: 'Reports', href: '#', current: false },
-]
+
 const userNavigation = [
   { name: 'Your Profile', href: '#' },
   { name: 'Settings', href: '#' },
@@ -36,25 +31,19 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-const pathname = window.location.pathname;
-
-// Determine which component to render based on the URL
-const isRoomPage = pathname.includes('/Rooms');
-const isRiadPage = pathname.includes('/Riads');
-
 export default function Riads() {
+  const location = useLocation();
 
-  
+  const navigation = [
+    { name: 'Riads', href: '/admin/Riads', current: location.pathname.includes('/Riads') },
+    { name: 'Rooms', href: '/admin/Rooms', current: location.pathname.includes('/Rooms') },
+    { name: 'Projects', href: '#', current: false },
+    { name: 'Calendar', href: '#', current: false },
+    { name: 'Reports', href: '#', current: false },
+  ]
+
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-gray-100">
-        <body class="h-full">
-        ```
-      */}
       <div className="min-h-full">
         <Disclosure as="nav" className="bg-indigo-600">
           {({ open }) => (
@@ -72,9 +61,9 @@ export default function Riads() {
                     <div className="hidden md:block">
                       <div className="ml-10 flex items-baseline space-x-4">
                         {navigation.map((item) => (
-                          <a
+                          <Link
                             key={item.name}
-                            href={item.href}
+                            to={item.href}
                             className={classNames(
                               item.current
                                 ? 'bg-indigo-700 text-white'
@@ -84,7 +73,7 @@ export default function Riads() {
                             aria-current={item.current ? 'page' : undefined}
                           >
                             {item.name}
-                          </a>
+                          </Link>
                         ))}
                       </div>
                     </div>
@@ -218,9 +207,7 @@ export default function Riads() {
         </main>
       </div>
 
-      {isRoomPage ? <RoomTable /> : isRiadPage ? <Table /> : <div>Select a page</div>}
-
-
+      {window.location.pathname.includes('/Rooms') ? <RoomTable /> : window.location.pathname.includes('/Riads') ? <Table /> : <div>Select a page</div>}
     </>
   )
 }

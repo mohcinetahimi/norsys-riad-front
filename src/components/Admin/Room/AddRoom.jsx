@@ -1,4 +1,4 @@
-import React , {useContext}from 'react';
+import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -14,8 +14,12 @@ const schema = yup.object().shape({
   id_riad: yup.string().required('Riad ID is required'),
 });
 
-const addRoom = async (room) => {
-  const response = await axios.post('http://localhost:3999/Rooms', room);
+const addRoom = async (formData) => {
+  const response = await axios.post('http://localhost:8000/room/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
   return response.data;
 };
 
@@ -25,7 +29,9 @@ const AddRoom = () => {
   });
 
   const queryClient = useQueryClient();
-  const  {setOpen} = useContext(OpenContext)
+  const { setOpen } = useContext(OpenContext);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+
   const mutation = useMutation({
     mutationFn: addRoom,
     onSuccess: () => {
@@ -38,7 +44,22 @@ const AddRoom = () => {
   });
 
   const onSubmit = (data) => {
-    mutation.mutate(data);
+    const formData = new FormData();
+    formData.append('name', data.name);
+    formData.append('description', data.description);
+    formData.append('nb_personne', data.nb_personne);
+    formData.append('price', data.price);
+    formData.append('id_riad', data.id_riad);
+
+    selectedFiles.forEach(file => {
+      formData.append('imageFiles[]', file);
+    });
+
+    mutation.mutate(formData);
+  };
+
+  const handleImageChange = (e) => {
+    setSelectedFiles(Array.from(e.target.files));
   };
 
   return (
@@ -49,96 +70,95 @@ const AddRoom = () => {
             <p className="mt-1 text-sm leading-6 text-gray-600">Enter the details of the new room below.</p>
 
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+              {/* Name */}
               <div className="sm:col-span-3">
-                <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">
-                  Name
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    name="name"
-                    id="name"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    {...register("name")}
-                  />
-                  {errors.name && <p className="mt-2 text-sm text-red-600">{errors.name.message}</p>}
-                </div>
+                <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  {...register('name')}
+                  className="mt-2 block w-full px-3 py-1.5 text-gray-900 placeholder:text-gray-400 ring-1 ring-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                />
+                {errors.name && <p className="text-red-600">{errors.name.message}</p>}
               </div>
 
+              {/* Description */}
               <div className="sm:col-span-6">
-                <label htmlFor="description" className="block text-sm font-medium leading-6 text-gray-900">
-                  Description
-                </label>
-                <div className="mt-2">
-                  <textarea
-                    name="description"
-                    id="description"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    {...register("description")}
-                  />
-                  {errors.description && <p className="mt-2 text-sm text-red-600">{errors.description.message}</p>}
-                </div>
+                <label htmlFor="description" className="block text-sm font-medium leading-6 text-gray-900">Description</label>
+                <textarea
+                  id="description"
+                  {...register('description')}
+                  className="mt-2 block w-full px-3 py-1.5 text-gray-900 placeholder:text-gray-400 ring-1 ring-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                />
+                {errors.description && <p className="text-red-600">{errors.description.message}</p>}
               </div>
 
+              {/* Number of People */}
               <div className="sm:col-span-3">
-                <label htmlFor="nb_personne" className="block text-sm font-medium leading-6 text-gray-900">
-                  Number of People
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="number"
-                    name="nb_personne"
-                    id="nb_personne"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    {...register("nb_personne")}
-                  />
-                  {errors.nb_personne && <p className="mt-2 text-sm text-red-600">{errors.nb_personne.message}</p>}
-                </div>
+                <label htmlFor="nb_personne" className="block text-sm font-medium leading-6 text-gray-900">Number of People</label>
+                <input
+                  type="number"
+                  id="nb_personne"
+                  {...register('nb_personne')}
+                  className="mt-2 block w-full px-3 py-1.5 text-gray-900 placeholder:text-gray-400 ring-1 ring-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                />
+                {errors.nb_personne && <p className="text-red-600">{errors.nb_personne.message}</p>}
               </div>
 
+              {/* Price */}
               <div className="sm:col-span-3">
-                <label htmlFor="price" className="block text-sm font-medium leading-6 text-gray-900">
-                  Price
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="number"
-                    name="price"
-                    id="price"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    {...register("price")}
-                  />
-                  {errors.price && <p className="mt-2 text-sm text-red-600">{errors.price.message}</p>}
-                </div>
+                <label htmlFor="price" className="block text-sm font-medium leading-6 text-gray-900">Price</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="price"
+                  {...register('price')}
+                  className="mt-2 block w-full px-3 py-1.5 text-gray-900 placeholder:text-gray-400 ring-1 ring-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                />
+                {errors.price && <p className="text-red-600">{errors.price.message}</p>}
               </div>
 
+              {/* Riad ID */}
+              <div className="sm:col-span-3">
+                <label htmlFor="id_riad" className="block text-sm font-medium leading-6 text-gray-900">Riad ID</label>
+                <input
+                  type="text"
+                  id="id_riad"
+                  {...register('id_riad')}
+                  className="mt-2 block w-full px-3 py-1.5 text-gray-900 placeholder:text-gray-400 ring-1 ring-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                />
+                {errors.id_riad && <p className="text-red-600">{errors.id_riad.message}</p>}
+              </div>
+
+              {/* Images */}
               <div className="sm:col-span-6">
-                <label htmlFor="id_riad" className="block text-sm font-medium leading-6 text-gray-900">
-                  Riad ID
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    name="id_riad"
-                    id="id_riad"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    {...register("id_riad")}
-                  />
-                  {errors.id_riad && <p className="mt-2 text-sm text-red-600">{errors.id_riad.message}</p>}
-                </div>
+                <label htmlFor="imageFiles" className="block text-sm font-medium leading-6 text-gray-900">Images</label>
+                <input
+                  type="file"
+                  id="imageFiles"
+                  multiple
+                  onChange={handleImageChange}
+                  className="mt-2 block w-full px-3 py-1.5 text-gray-900 placeholder:text-gray-400 ring-1 ring-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                />
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="mt-6 flex items-center justify-end gap-x-6">
-          <button type="button" className="text-sm font-semibold leading-6 text-gray-900" onClick={()=>{setOpen(false)}}>Cancel</button>
-          <button
-            type="submit"
-            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            Save
-          </button>
+          <div className="mt-6 flex gap-x-4">
+            <button
+              type="submit"
+              className="inline-block px-3 py-1.5 text-white bg-indigo-600 rounded-md shadow-sm ring-1 ring-gray-300 hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+            >
+              Add Room
+            </button>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="inline-block px-3 py-1.5 text-white bg-gray-600 rounded-md shadow-sm ring-1 ring-gray-300 hover:bg-gray-700 focus:ring-2 focus:ring-gray-600 sm:text-sm"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       </form>
     </div>
