@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect } from 'react';
 import {
   Disclosure,
   DisclosureButton,
@@ -25,10 +25,10 @@ const userNavigation = [
   { name: 'Your Profile', href: '#' },
   { name: 'Settings', href: '#' },
   { name: 'Sign out', href: '#' },
-]
+];
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(' ');
 }
 
 export default function Riads() {
@@ -41,6 +41,7 @@ export default function Riads() {
     { name: 'Calendar', href: '#', current: false },
     { name: 'Reports', href: '#', current: false },
   ]
+
 
   return (
     <>
@@ -111,7 +112,8 @@ export default function Riads() {
                               <MenuItem key={item.name}>
                                 {({ focus }) => (
                                   <a
-                                    href={item.href}
+                                    href={item.name === 'Sign out' ? '#' : item.href}
+                                    onClick={item.name === 'Sign out' ? handleLogout : undefined}
                                     className={classNames(
                                       focus ? 'bg-gray-100' : '',
                                       'block px-4 py-2 text-sm text-gray-700'
@@ -184,7 +186,8 @@ export default function Riads() {
                       <DisclosureButton
                         key={item.name}
                         as="a"
-                        href={item.href}
+                        href={item.name === 'Sign out' ? '#' : item.href}
+                        onClick={item.name === 'Sign out' ? handleLogout : undefined}
                         className="block rounded-md px-3 py-2 text-base font-medium text-white hover:bg-indigo-500 hover:bg-opacity-75"
                       >
                         {item.name}
@@ -209,5 +212,5 @@ export default function Riads() {
 
       {window.location.pathname.includes('/Rooms') ? <RoomTable /> : window.location.pathname.includes('/Riads') ? <Table /> : <div>Select a page</div>}
     </>
-  )
+  );
 }
