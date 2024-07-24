@@ -55,7 +55,7 @@ const RiadData = [
 
 export function Slider() {
     return (
-        <div className="flex items-center justify-center flex-col h-screen">
+        <div className="flex items-center justify-center flex-col h-screen" id="slider">
             <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl mb-10 text-center">
                 Discover and Book Your Stay
             </h2>

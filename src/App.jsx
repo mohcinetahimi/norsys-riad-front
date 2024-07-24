@@ -22,7 +22,7 @@ function App() {
 
   return (
     <>
-        <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
     <OpenProvider>
     <BrowserRouter>
     <Routes>

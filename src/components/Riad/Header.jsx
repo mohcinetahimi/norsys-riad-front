@@ -3,7 +3,7 @@ import bgImg from '../../assets/bgImg.jpeg';
 export default function Header() {
 
     return (
-        <div className="relative isolate overflow-hidden bg-gray-900 h-screen flex items-center justify-center">
+        <div className="relative isolate overflow-hidden bg-gray-900 h-screen flex items-center justify-center" id="header">
             <img
                 src={bgImg}
                 alt="Riad reservation system image"

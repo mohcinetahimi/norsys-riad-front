@@ -1,5 +1,3 @@
-import { useState } from 'react'
-
 import Navbar from '../components/Riad/Navbar.jsx'
 import Footer from '../components/Riad/Footer.jsx'
 import RiadList from '../components/Riad/RiadList.jsx'

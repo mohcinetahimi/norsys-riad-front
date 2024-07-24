@@ -30,7 +30,7 @@ const incentives = [
 
 export default function Incentive() {
     return (
-    <div className="bg-gray-50">
+    <div className="bg-gray-50" id="incentive">
         <div className="mx-auto max-w-2xl px-4 py-24 sm:px-6 sm:py-32 lg:max-w-7xl lg:px-8">
             <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl mb-10 text-center">
                 Our Services
