@@ -6,46 +6,42 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
-
 export default function Login() {
   const [errorMessage, setErrorMessage] = useState('');
-  
+
   const schema = yup.object().shape({
-    email: yup.string().required('Email is required').email('Email is invalid'),
+    username: yup.string().required('Username is required'),
     password: yup
       .string()
       .required('Password is required')
-      .min(6, 'Password must be at least 6 characters long')
-      .matches(
-        /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+])[A-Za-z0-9!@#$%^&*()_+]{6,}$/,
-        'Password must contain at least one uppercase letter, one number, and one symbol'
-      ),
   });
 
   const { register, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
   const navigate = useNavigate();
-
   const onSubmit = async (data) => {
     try {
+      if (!data.username || !data.password) {
+        setErrorMessage('Both username and password are required.');
+        return;
+      }
+  
       const response = await axios.post('http://localhost:8000/api/login', data);
-      
-      console.log('Login successful', response.data);
-
-      // Redirect to another route upon successful login
-      navigate('/admin/Riads'); // Replace '/admin/Riads' with your desired route
+  
+      if (response.status === 200 && response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        console.log('Login successful', response.data);
+        navigate('/admin/Riads');
+      } else {
+        setErrorMessage(' Please check Username and Password try again.');
+      }
     } catch (error) {
       console.error('Login failed', error.response ? error.response.data : error.message);
-
-      // Handle login failure here, e.g., show error message to user
-      if (error.response && error.response.status === 404) {
-        setErrorMessage('User not found. Please check your email.');
-      } else if (error.response && error.response.status === 401) {
-        setErrorMessage('Invalid credentials. Please check your email and password.');
-      } else {
-        setErrorMessage('An unexpected error occurred. Please try again later.');
-      }
+      
+      // Display error message from backend response or a default message
+      setErrorMessage(error.response?.data?.error +'\nPlease check Username and Password try again.');
     }
   };
+  
 
   return (
     <>
@@ -71,19 +67,19 @@ export default function Login() {
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-                Email address
+              <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">
+                Username
               </label>
               <div className="mt-2">
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  {...register("email")}
+                  type="text"
+                  name="username"
+                  id="username"
+                  autoComplete="username"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  {...register("username")}
                 />
-                {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>}
+                {errors.username && <p className="mt-2 text-sm text-red-600">{errors.username.message}</p>}
               </div>
             </div>
 
@@ -92,11 +88,6 @@ export default function Login() {
                 <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
                   Password
                 </label>
-                <div className="text-sm">
-                  <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
-                    Forgot password?
-                  </a>
-                </div>
               </div>
               <div className="mt-2">
                 <input
@@ -121,12 +112,19 @@ export default function Login() {
             </div>
           </form>
 
-          <p className="mt-10 text-center text-sm text-gray-500">
+          <div className="mt-2 text-center text-sm text-gray-500">
+            <Link to="/forgotPassword" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+              Forgot password?
+            </Link>
+          </div>
+
+          <div className="mt-10 text-center text-sm text-gray-500">
             Not a member?{' '}
             <Link to="/register" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
               Register Now
             </Link>
-          </p>
+          </div>
+
         </div>
       </div>
     </>

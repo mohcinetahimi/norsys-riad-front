@@ -6,9 +6,11 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
-
 const schema = yup.object().shape({
-  username: yup.string().required('Username is required').max(100, 'Username cannot exceed 100 characters'),
+  username: yup.string().required('Username is required').min(10, 'Username must be at least 10 characters long').matches(
+    /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+])[A-Za-z0-9!@#$%^&*()_+]{6,}$/,
+    'Username must contain at least one uppercase letter, one number, and one symbol'
+  ),
   email: yup.string().required('Email is required').email('Email is invalid'),
   password: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters long').matches(
     /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+])[A-Za-z0-9!@#$%^&*()_+]{6,}$/,
@@ -16,8 +18,11 @@ const schema = yup.object().shape({
   ),
   passwordConfirmation: yup.string()
     .oneOf([yup.ref('password'), null], 'Passwords must match')
-    .required('Password confirmation is required')
+    .required('Password confirmation is required'),
+  role: yup.string().required('Role is required'),
 });
+
+const roles = ['ROLE_USER', 'ROLE_ADMIN']; // Define available roles
 
 const Register = () => {
   const { register, handleSubmit, formState: { errors } } = useForm({
@@ -25,15 +30,30 @@ const Register = () => {
   });
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post('http://localhost:8000/api/register', data);
+      const response = await axios.post('http://localhost:8000/api/register', {
+        ...data,
+        roles: [data.role] 
+      });
       console.log('Registration successful:', response.data);
-      navigate('/login');
+      setErrorMessage(''); // Clear error message
+      setSuccessMessage('Registration successful! You will be redirected shortly.');
+      setIsRedirecting(true);
+      setTimeout(() => {
+      navigate('/Login');
+      }, 2000); // Wait 3 seconds before redirecting
     } catch (error) {
       console.error('Registration failed:', error);
-      setErrorMessage('Registration failed. Please try again.');
+      setSuccessMessage(''); // Clear success message
+      if (error.response && error.response.data && error.response.data.message) {
+        setErrorMessage(error.response.data.message);
+      } else {
+        setErrorMessage('An unexpected error occurred. Please try again later.');
+      }
     }
   };
 
@@ -56,6 +76,13 @@ const Register = () => {
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
               <strong className="font-bold">Error:</strong>
               <span className="block sm:inline"> {errorMessage}</span>
+            </div>
+          )}
+
+          {successMessage && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+              <strong className="font-bold">Success:</strong>
+              <span className="block sm:inline"> {successMessage}</span>
             </div>
           )}
 
@@ -124,6 +151,26 @@ const Register = () => {
                 {...register("passwordConfirmation")}
               />
               {errors.passwordConfirmation && <p className="mt-2 text-sm text-red-600">{errors.passwordConfirmation.message}</p>}
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="role" className="block text-sm font-medium leading-6 text-gray-900">
+              Role
+            </label>
+            <div className="mt-2">
+              <select
+                name="role"
+                id="role"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                {...register("role")}
+              >
+                <option value="">Select a role</option>
+                {roles.map(role => (
+                  <option key={role} value={role}>{role}</option>
+                ))}
+              </select>
+              {errors.role && <p className="mt-2 text-sm text-red-600">{errors.role.message}</p>}
             </div>
           </div>
 

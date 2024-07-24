@@ -4,10 +4,12 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './components/Auth/Login'
 import Register from './components/Auth/Register'
 import RiadsAdmin from './pages/RiadsAdmin'
-import { ForgotPassword } from './components/Auth/ForgotPassword';
+import PasswordReset from './components/PasswordRequest/resetpassword';
+import { ForgotPassword } from './components/PasswordRequest/ForgotPassword';
 
 import { OpenProvider } from './contexts/OpenContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
 
 
 import './App.css'
@@ -32,6 +34,7 @@ function App() {
       <Route path='/admin/Riads' element={<RiadsAdmin/>}/>
       <Route path='/riad/:id' element={<RiadDetail />}/>
       <Route path='/forgotPassword' element={<ForgotPassword/>}/>
+      <Route path="/password-reset" element={<PasswordReset />} />
     </Routes>
     </BrowserRouter>
     </OpenProvider>
