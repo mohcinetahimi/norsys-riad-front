@@ -1,33 +1,32 @@
 import React, { useState, useContext } from 'react';
-import { useQuery,useQueryClient } from '@tanstack/react-query';
-import AddRiad from '../Riad/AddRiad';
-import  { OpenContext } from '../../../contexts/OpenContext'
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import AddRoom from '../Room/AddRoom'; 
+import { OpenContext } from '../../../contexts/OpenContext';
 import ModalAdd from '../../Modal/ModalAdd';
 import ModalEdit from '../../Modal/ModalEdit';
 import axios from 'axios';
 import { Button } from '@headlessui/react';
 
-const fetchRiads = async () => {
-  const { data } = await axios.get('http://localhost:3999/Riads');
+const fetchRooms = async () => {
+  const { data } = await axios.get('http://localhost:3999/Rooms');  // Adjust the URL as necessary
   return data;
 };
-
 
 export default function Table() {
   const { setOpen } = useContext(OpenContext);
   const [search, setSearch] = useState("");
   const queryClient = useQueryClient();
-  const { data: riads = [], error, isLoading } = useQuery({
-    queryKey: ['riads'],
-    queryFn: fetchRiads
+  const { data: rooms = [], error, isLoading } = useQuery({
+    queryKey: ['rooms'],
+    queryFn: fetchRooms
   });
 
-  const deleteRiad = async (id) => {
+  const deleteRoom = async (id) => {
     try {
-      await axios.delete(`http://localhost:3999/Riads/${id}`);
-      queryClient.invalidateQueries('riads'); // Refetch riads after deletion
+      await axios.delete(`http://localhost:3999/Rooms/${id}`);  // Adjust the URL as necessary
+      queryClient.invalidateQueries('rooms'); // Refetch rooms after deletion
     } catch (error) {
-      console.error("There was an error deleting the riad!", error);
+      console.error("There was an error deleting the room!", error);
     }
   };
 
@@ -47,8 +46,8 @@ export default function Table() {
 
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">Riads</h1>
-          <p className="mt-2 text-sm text-gray-700">A table of Riads.</p>
+          <h1 className="text-base font-semibold leading-6 text-gray-900">Rooms</h1>
+          <p className="mt-2 text-sm text-gray-700">A table of Rooms.</p>
         </div>
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
           <button
@@ -70,13 +69,7 @@ export default function Table() {
                     scope="col"
                     className="whitespace-nowrap py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
                   >
-                    Riad ID
-                  </th>
-                  <th
-                    scope="col"
-                    className="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900"
-                  >
-                    Name
+                    Room Name
                   </th>
                   <th
                     scope="col"
@@ -88,13 +81,19 @@ export default function Table() {
                     scope="col"
                     className="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    Address
+                    Number of People
                   </th>
                   <th
                     scope="col"
                     className="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    City
+                    Price
+                  </th>
+                  <th
+                    scope="col"
+                    className="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Riad ID
                   </th>
                   <th scope="col" className="relative whitespace-nowrap py-3.5 pl-3 pr-4 sm:pr-0">
                     <span className="sr-only">Edit</span>
@@ -102,20 +101,19 @@ export default function Table() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {riads.filter(riad => riad.name.toLowerCase().includes(search)).map((riad) => (
-                  <tr key={riad.id}>
-                    <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-0">{riad.id}</td>
-                    <td className="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-900">{riad.name}</td>
-                    <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-900">{riad.description}</td>
-                    <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{riad.address}</td>
-                    <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{riad.city}</td>
+                {rooms.filter(room => room.name.toLowerCase().includes(search)).map((room) => (
+                  <tr key={room.id}>
+                    <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-0">{room.name}</td>
+                    <td className="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-900">{room.description}</td>
+                    <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-900">{room.nb_personne}</td>
+                    <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{room.price}</td>
+                    <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{room.id_riad}</td>
                     <td className="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                      <ModalEdit riadId={riad.id}/>
-                      
+                      <ModalEdit roomId={room.id}/>  {/* Update this component to handle room edits */}
                     </td>
                     <td>
-                    <button className={"bg-red-500 text-white font-bold py-2 px-2 mx-1 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"}
-                     onClick={() => deleteRiad(riad.id)}>
+                      <button className={"bg-red-500 text-white font-bold py-2 px-2 mx-1 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"}
+                        onClick={() => deleteRoom(room.id)}>
                         Delete
                       </button>
                     </td>
@@ -127,7 +125,8 @@ export default function Table() {
         </div>
       </div>
       <ModalAdd>
-        <AddRiad />
+        
+        <AddRoom />
       </ModalAdd>
     </div>
   );
