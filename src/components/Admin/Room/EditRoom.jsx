@@ -11,23 +11,30 @@ const schema = yup.object().shape({
   price: yup.number().required('Price is required').min(0, 'Price cannot be negative'),
   nb_personne: yup.number().required('Number of persons is required').min(1, 'Number of persons must be at least 1'),
   description: yup.string().required('Description is required').max(500, 'Description cannot exceed 500 characters'),
-  id_riad: yup.number().required('Riad ID is required').min(1, 'Riad ID must be a positive number'), // Add RiadId field
 });
 
 // Fetch Room by ID
 const getRoomById = async (roomId) => {
-  const response = await axios.get(`http://localhost:3999/Rooms/${roomId}`);
+  const response = await axios.get(`http://localhost:8000/api/rooms/${roomId}`, {
+    headers: {
+      'accept': 'application/ld+json',
+    },
+  });
   return response.data;
 };
 
 // Edit Room entity
 const editRoom = async (room) => {
-  const response = await axios.put(`http://localhost:3999/Rooms/${room.id}`, room);
+  const response = await axios.put(`http://localhost:8000/api/rooms/${room.id}`, room, {
+    headers: {
+      'Content-Type': 'application/ld+json',
+    },
+  });
   return response.data;
 };
 
 const EditRoom = ({ roomId, onClose }) => {
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm({
+  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
 
@@ -37,11 +44,7 @@ const EditRoom = ({ roomId, onClose }) => {
     const fetchRoom = async () => {
       try {
         const roomData = await getRoomById(roomId);
-        setValue('name', roomData.name);
-        setValue('price', roomData.price);
-        setValue('nb_personne', roomData.nb_personne);
-        setValue('description', roomData.description);
-        setValue('id_riad', roomData.id_riad); // Set RiadId value
+        reset(roomData); // Reset form with fetched data
       } catch (error) {
         console.error('Error fetching room data:', error);
       }
@@ -50,7 +53,7 @@ const EditRoom = ({ roomId, onClose }) => {
     if (roomId) {
       fetchRoom();
     }
-  }, [roomId, setValue]);
+  }, [roomId, reset]);
 
   const mutation = useMutation({
     mutationFn: editRoom,
@@ -64,7 +67,9 @@ const EditRoom = ({ roomId, onClose }) => {
   });
 
   const onSubmit = (data) => {
-    mutation.mutate({ ...data, id: roomId });
+    // Add the id_riad directly to the data being sent
+    const roomData = { ...data, id: roomId, id_riad: data.id_riad };
+    mutation.mutate(roomData);
   };
 
   return (
@@ -138,25 +143,6 @@ const EditRoom = ({ roomId, onClose }) => {
                   {errors.description && <p className="mt-2 text-sm text-red-600">{errors.description.message}</p>}
                 </div>
               </div>
-
-              <div className="sm:col-span-3">
-                <label htmlFor="id_riad" className="block text-sm font-medium leading-6 text-gray-900">
-                  Riad ID
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="number"
-                    name="id_riad"
-                    id="id_riad"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    {...register("id_riad")}
-                  />
-                  {errors.id_riad && <p className="mt-2 text-sm text-red-600">{errors.id_riad.message}</p>}
-                </div>
-              </div>
-
-              {/* Add other fields specific to rooms here */}
-
             </div>
           </div>
         </div>

@@ -33,6 +33,10 @@ function classNames(...classes) {
 
 export default function Riads() {
   const location = useLocation();
+  const handleLogout = () => {
+    // Add your logout logic here
+    console.log('User logged out');
+  };
 
   const navigation = [
     { name: 'Riads', href: '/admin/Riads', current: location.pathname.includes('/Riads') },

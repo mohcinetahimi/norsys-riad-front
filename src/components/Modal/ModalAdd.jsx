@@ -1,22 +1,20 @@
-import { Fragment } from 'react';
+import { Fragment, useContext } from 'react';
 import { Dialog, DialogPanel, DialogTitle, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import AddRoom from '../Admin/Room/AddRoom';
 import AddRiad from '../Admin/Riad/AddRiad';
-import { useContext } from 'react';
 import { OpenContext } from '../../contexts/OpenContext';
 
 export default function ModalAdd() {
-  const { open, setOpen } = useContext(OpenContext);
+  const { modals, closeModal } = useContext(OpenContext);
   const pathname = window.location.pathname;
 
-  // Determine which component to render based on the URL
   const isRoomPage = pathname.includes('/Rooms');
   const isRiadPage = pathname.includes('/Riads');
 
   return (
-    <Transition show={open} as={Fragment}>
-      <Dialog className="relative z-10" onClose={() => setOpen(false)}>
+    <Transition show={modals.modalAdd} as={Fragment}>
+      <Dialog className="relative z-10" onClose={() => closeModal('modalAdd')}>
         <div className="fixed inset-0 bg-black bg-opacity-25" />
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
@@ -40,7 +38,7 @@ export default function ModalAdd() {
                           <button
                             type="button"
                             className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                            onClick={() => setOpen(false)}
+                            onClick={() => closeModal('modalAdd')}
                           >
                             <span className="absolute -inset-2.5" />
                             <span className="sr-only">Close panel</span>

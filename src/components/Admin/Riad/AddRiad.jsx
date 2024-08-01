@@ -14,7 +14,7 @@ const schema = yup.object().shape({
 });
 
 const addRiad = async (riad) => {
-  const response = await axios.post('http://localhost:3999/Riads', riad);
+  const response = await axios.post('http://localhost:8000/api/riads', riad);
   return response.data;
 };
 
@@ -22,14 +22,14 @@ const AddRiad = () => {
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
-  const {setOpen} = useContext(OpenContext);
+  const { closeModal } = useContext(OpenContext); // Correctly use closeModal function
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: addRiad,
     onSuccess: () => {
       queryClient.invalidateQueries(['riads']);
-      setOpen(false); // Use the setOpen function to close the modal
+      closeModal('modalAdd'); // Use the closeModal function to close the modal
     },
     onError: (error) => {
       console.error('Adding riad failed:', error);
@@ -115,7 +115,7 @@ const AddRiad = () => {
         </div>
 
         <div className="mt-6 flex items-center justify-end gap-x-6">
-          <button type="button" className="text-sm font-semibold leading-6 text-gray-900" onClick={() => setOpen(false)} >Cancel</button>
+          <button type="button" className="text-sm font-semibold leading-6 text-gray-900" onClick={() => closeModal('modalAdd')}>Cancel</button>
           <button
             type="submit"
             className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"

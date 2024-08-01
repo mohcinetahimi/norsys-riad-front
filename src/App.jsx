@@ -14,6 +14,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import './App.css'
 import Test from './components/Test';
+import Test2 from './components/Test2.jsx'
 import HomePage from "./pages/HomePage.jsx";
 import RiadDetail from "./pages/RiadDetail.jsx";
 import Header from "./components/Riad/Header.jsx";
@@ -36,6 +37,7 @@ function App() {
       {<Route path='/admin/Rooms' element={<RiadsAdmin/>}/> }
       <Route path='/forgotPassword' element={<ForgotPassword/>}/>
       <Route path='/test' element={<Test />}/>
+      <Route path='/test2' element={<Test2/>}/>
       <Route path='/riad/:id' element={<RiadDetail />}/>
       <Route path='/forgotPassword' element={<ForgotPassword/>}/>
       <Route path="/password-reset" element={<PasswordReset />} />
