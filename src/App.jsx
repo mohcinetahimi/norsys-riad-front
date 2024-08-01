@@ -9,7 +9,7 @@ import PasswordReset from './components/PasswordRequest/resetpassword';
 import { ForgotPassword } from './components/PasswordRequest/ForgotPassword';
 import HomePage from "./pages/HomePage.jsx";
 import RiadDetail from "./pages/RiadDetail.jsx";
-import AddRoom from "./components/Admin/Room/addroom.jsx";
+// import AddRoom from "./components/Admin/Room/addroom.jsx";
 import AddRiad from "./components/Admin/Riad/AddRiad.jsx";
 import AdminLogin from "./components/Admin/Auth/AdminLogin.jsx";
 import ListRooms from "./components/Admin/Room/ListRooms.jsx";
@@ -19,6 +19,17 @@ import EditUser from './components/Admin/Users/EditUser.jsx';
 import ProtectedRoute from './components/Admin/token/ProtectedRoute';
 import { OpenProvider } from './contexts/OpenContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+
+
+import './App.css'
+import Test from './components/Test';
+import Test2 from './components/Test2.jsx'
+import HomePage from "./pages/HomePage.jsx";
+import RiadDetail from "./pages/RiadDetail.jsx";
+import Header from "./components/Riad/Header.jsx";
+import RiadList from "./components/Riad/RiadList.jsx";
+import Incentive from "./components/Riad/Incentive.jsx";
 
 
 function App() {

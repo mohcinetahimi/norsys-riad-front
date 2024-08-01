@@ -13,12 +13,12 @@ const schema = yup.object().shape({
 });
 
 const getRiadById = async (riadId) => {
-  const response = await axios.get(`http://localhost:3999/Riads/${riadId}`);
+  const response = await axios.get(`http://localhost:8000/api/riads/${riadId}`);
   return response.data;
 };
 
 const editRiad = async (riad) => {
-  const response = await axios.put(`http://localhost:3999/Riads/${riad.id}`, riad);
+  const response = await axios.put(`http://localhost:8000/api/riads/${riad.id}`, riad);
   return response.data;
 };
 
