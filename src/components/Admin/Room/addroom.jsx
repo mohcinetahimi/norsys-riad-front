@@ -15,7 +15,7 @@ const schema = yup.object().shape({
 });
 
 const addRoom = async (formData) => {
-  const response = await axios.post('http://localhost:8000/room/upload', formData, {
+  const response = await axios.post('http://localhost:8000/api/rooms', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -49,7 +49,7 @@ const AddRoom = () => {
     formData.append('description', data.description);
     formData.append('nb_personne', data.nb_personne);
     formData.append('price', data.price);
-    formData.append('id_riad', data.id_riad);
+    formData.append('riad', data.id_riad);
 
     selectedFiles.forEach(file => {
       formData.append('imageFiles[]', file);
