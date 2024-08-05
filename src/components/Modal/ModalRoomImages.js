@@ -1,10 +1,9 @@
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axiosInstance from '../Admin/token/config';
 
-// Fetch room data
 const fetchRoomData = async (roomId) => {
   try {
     const { data } = await axiosInstance.get(`/rooms/${roomId}`);
@@ -18,24 +17,10 @@ const fetchRoomData = async (roomId) => {
   }
 };
 
-// Fetch riad data
-const fetchRiadData = async (riadId) => {
+const uploadImage = async ({ roomId, formData }) => {
   try {
-    const { data } = await axiosInstance.get(`/riads/${riadId}`);
-    return data;
-  } catch (error) {
-    if (error.response?.status === 404) {
-      return null;
-    }
-    console.error('Error fetching riad data:', error);
-    throw error;
-  }
-};
-
-// Upload image
-const uploadImage = async ({ id, formData, type }) => {
-  try {
-    const response = await axiosInstance.post(`/${type}_images`, formData, {
+    console.log('Uploading image with formData:', formData);
+    const response = await axiosInstance.post('/room_images', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -47,66 +32,49 @@ const uploadImage = async ({ id, formData, type }) => {
   }
 };
 
-// Delete image
-const deleteImage = async (imageId, type) => {
-  if (!imageId) {
-    throw new Error('Image ID is required for deletion');
-  }
+const deleteImage = async (imageId) => {
   try {
-    await axiosInstance.delete(`/${type}_images/${imageId}`);
+    await axiosInstance.delete(`/room_images/${imageId}`);
   } catch (error) {
     console.error('Error deleting image:', error);
     throw error;
   }
 };
 
-export default function ModalImages({ riadId, roomId }) {
+export default function ModalRoomImages({ roomId }) {
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState(null);
   const queryClient = useQueryClient();
 
-  const type = roomId ? 'room' : 'riad';
-  const type2 = roomId ? 'rooom' : 'riiad';
-  const id = roomId || riadId;
-
-  const { data, error, isLoading, isError } = useQuery({
-    queryKey: [type, id],
-    queryFn: () => (type === 'room' ? fetchRoomData(id) : fetchRiadData(id)),
-    onSuccess: (data) => {
-      if (!data) {
-        console.error(`${type.charAt(0).toUpperCase() + type.slice(1)} not found`);
+  const { data: roomData, error, isLoading } = useQuery({
+    queryKey: ['room', roomId],
+    queryFn: () => fetchRoomData(roomId),
+    onError: (error) => {
+      if (error.response?.status === 404) {
+        console.error('Room not found');
         setOpen(false);
       }
-    },
-    onError: (error) => {
-      console.error('Error fetching data:', error);
-      setOpen(false);
     },
   });
 
   const uploadMutation = useMutation({
-    mutationFn: ({ id, formData }) => uploadImage({ id, formData, type: type2 }),
+    mutationFn: ({ roomId, formData }) => uploadImage({ roomId, formData }),
     onSuccess: () => {
-      queryClient.invalidateQueries([type, id]);
+      queryClient.invalidateQueries(['room', roomId]);
       setOpen(false);
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (imageId) => deleteImage(imageId, type),
+    mutationFn: (imageId) => deleteImage(imageId),
     onSuccess: () => {
-      queryClient.invalidateQueries([type, id]);
+      queryClient.invalidateQueries(['room', roomId]);
     },
   });
 
-  useEffect(() => {
-    if (isError) {
-      console.error('Error fetching data:', error);
-    }
-  }, [isError, error]);
-
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
+    console.log('Selected file:', selectedFile);
     setFile(selectedFile);
   };
 
@@ -118,29 +86,28 @@ export default function ModalImages({ riadId, roomId }) {
 
     const formData = new FormData();
     formData.append('imageFile', file);
-    if (roomId) formData.append('room', `${roomId}`);
-    if (riadId) formData.append('riad', `${riadId}`);
+    formData.append('room', `${roomId}`);
 
-    uploadMutation.mutate({ id, formData });
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
+
+    uploadMutation.mutate({ roomId, formData });
   };
 
   const handleDelete = (imageId) => {
-    if (!imageId) {
-      console.error('Image ID is not defined');
-      return;
-    }
-    console.log('Deleting image with ID:', imageId);
     deleteMutation.mutate(imageId);
   };
 
   if (isLoading) return <div>Loading images...</div>;
-  if (isError) return <div>Error loading images</div>;
-  if (!data || !data.images) return <div>No images found</div>;
+  if (error) return <div>Error loading images</div>;
+
+  if (roomData === null) return <div>Room not found</div>;
 
   return (
     <>
       <button onClick={() => setOpen(true)} className="text-indigo-600 hover:text-indigo-900">
-        Manage Images
+        Upload Image
       </button>
       <Transition show={open} as={Fragment}>
         <Dialog className="relative z-10" onClose={() => setOpen(false)}>
@@ -161,7 +128,7 @@ export default function ModalImages({ riadId, roomId }) {
                       <div className="px-4 sm:px-6">
                         <div className="flex items-start justify-between">
                           <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
-                            Manage Images for {type.charAt(0).toUpperCase() + type.slice(1)} {id}
+                            Upload Image
                           </Dialog.Title>
                           <div className="ml-3 flex h-7 items-center">
                             <button
@@ -177,15 +144,10 @@ export default function ModalImages({ riadId, roomId }) {
                         </div>
                       </div>
                       <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                        <div className="flex flex-col items-center">
-                          <h2 className="text-lg font-medium">
-                            {type.charAt(0).toUpperCase() + type.slice(1)}: {type === 'room' ? data.riad.name : data.name}
-                          </h2>
-                          <h3 className="text-md font-medium mt-2">
-                            Images for {type.charAt(0).toUpperCase() + type.slice(1)} {id}
-                          </h3>
-                          <div className="flex flex-wrap mt-4">
-                            {data.images.map((image) => (
+                        <div>
+                          <h2>Images for Room {roomId}</h2>
+                          <div className="flex flex-wrap">
+                            {roomData.images.map((image) => (
                               <div key={image.id} className="relative w-32 h-32 m-2">
                                 <img
                                   src={`http://localhost:8000${image.imageUrl}`}

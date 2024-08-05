@@ -3,17 +3,26 @@ import { Dialog, DialogPanel, DialogTitle, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import AddRoom from '../Admin/Room/AddRoom';
 import AddRiad from '../Admin/Riad/AddRiad';
-import { OpenContext } from '../../contexts/OpenContext';
+import { OpenContext } from '../../contexts/OpenContext'; // Verify this path
 
 export default function ModalAdd() {
   const { modals, closeModal } = useContext(OpenContext);
+
+  if (!modals) {
+    // Handle the case where modals is undefined or null
+    return null;
+  }
+
   const pathname = window.location.pathname;
 
-  const isRoomPage = pathname.includes('/Rooms');
-  const isRiadPage = pathname.includes('/Riads');
+  const isRoomPage = pathname.includes('Rooms');
+  const isRiadPage = pathname.includes('Riads');
 
   return (
-    <Transition show={modals.modalAdd} as={Fragment}>
+    <Transition
+      show={!!modals.modalAdd}  // Ensure `show` is a boolean
+      as={Fragment}
+    >
       <Dialog className="relative z-10" onClose={() => closeModal('modalAdd')}>
         <div className="fixed inset-0 bg-black bg-opacity-25" />
         <div className="fixed inset-0 overflow-hidden">

@@ -8,7 +8,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const navigation = [
-    { name: 'Home', to: 'home', current: true },
+    { name: 'Home', to: 'home', current: false },
     { name: 'About Us', to: 'header', current: false },
     { name: 'Discover Morocco', to: 'slider', current: false },
     { name: 'Riads', to: 'riads', current: false },
