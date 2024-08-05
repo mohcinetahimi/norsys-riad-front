@@ -20,6 +20,9 @@ import RiadDetail from "./pages/RiadDetail.jsx";
 import Header from "./components/Riad/Header.jsx";
 import RiadList from "./components/Riad/RiadList.jsx";
 import Incentive from "./components/Riad/Incentive.jsx";
+import Calendar from "./components/Reservation/Calendar.jsx";
+import ReservationForm from './components/Reservation/ReservationForm.jsx';
+import CalendarRes from "./components/Admin/Reservation/CalendarRes.jsx";
 
 function App() {
   const queryClient = new QueryClient();
@@ -41,6 +44,9 @@ function App() {
       <Route path='/riad/:id' element={<RiadDetail />}/>
       <Route path='/forgotPassword' element={<ForgotPassword/>}/>
       <Route path="/password-reset" element={<PasswordReset />} />
+      <Route path="/cal" element={<CalendarRes />}/>
+      <Route path='/calendar' element={<Calendar/>}/> 
+      <Route  path='/resForm' element={<ReservationForm/>}/> 
     </Routes>
     </BrowserRouter>
     </OpenProvider>

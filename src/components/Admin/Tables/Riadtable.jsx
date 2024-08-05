@@ -5,6 +5,7 @@ import { OpenContext } from '../../../contexts/OpenContext';
 import AddRiad from '../Riad/AddRiad';
 import ModalAdd from '../../Modal/ModalAdd';
 import ModalEdit from '../../Modal/ModalEdit';
+import ModalImagesRiad from '../../Modal/ModalImagesRiad';
 
 const fetchRiads = async () => {
   const { data } = await axios.get('http://localhost:8000/api/riads');
@@ -105,6 +106,7 @@ export default function Table() {
                       >
                         Delete
                       </button>
+                      <ModalImagesRiad riadId={riad.id}></ModalImagesRiad>
                     </td>
                   </tr>
                 ))}
