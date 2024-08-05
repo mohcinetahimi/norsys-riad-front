@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -12,13 +12,6 @@ const schema = yup.object().shape({
   address: yup.string().required('Address is required').max(200, 'Address cannot exceed 200 characters'),
   city: yup.string().required('City is required').max(100, 'City cannot exceed 100 characters'),
 });
-
-const addRiad = async (riad) => {
-  const response = await axios.post('http://localhost:8000/api/riads', riad);
-  return response.data;
-};
-
-const AddRiad = () => {
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
@@ -37,7 +30,21 @@ const AddRiad = () => {
   });
 
   const onSubmit = (data) => {
-    mutation.mutate(data);
+    const formData = new FormData();
+    formData.append('name', data.name);
+    formData.append('description', data.description);
+    formData.append('address', data.address);
+    formData.append('city', data.city);
+
+    Array.from(images).forEach((image) => {
+      formData.append('images[]', image);
+    });
+
+    mutation.mutate(formData);
+  };
+
+  const handleFileChange = (e) => {
+    setImages(e.target.files);
   };
 
   return (
@@ -108,6 +115,23 @@ const AddRiad = () => {
                     {...register("city")}
                   />
                   {errors.city && <p className="mt-2 text-sm text-red-600">{errors.city.message}</p>}
+                </div>
+              </div>
+
+              <div className="sm:col-span-6">
+                <label htmlFor="images" className="block text-sm font-medium leading-6 text-gray-900">
+                  Images
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="file"
+                    name="images"
+                    id="images"
+                    multiple
+                    onChange={handleFileChange}
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                  {errors.images && <p className="mt-2 text-sm text-red-600">{errors.images.message}</p>}
                 </div>
               </div>
             </div>

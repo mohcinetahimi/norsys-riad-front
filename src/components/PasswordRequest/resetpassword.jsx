@@ -37,8 +37,9 @@ const ResetPassword = () => {
         } catch (error) {
             if (error.response && error.response.data) {
                 // Display the error message from the backend
-                setMessage('Error: ' + (error.response.data.message || 'Error resetting password'));
+                setMessage('Error resetting password, Try again later');
                 console.error('Reset password error:', error.response.data);
+               
             } else {
                 // Display a generic error message if the backend message is not available
                 setMessage('Error: An unexpected error occurred. Please try again later.');

@@ -7,6 +7,7 @@ import ModalAdd from '../../Modal/ModalAdd';
 import ModalEdit from '../../Modal/ModalEdit';
 import ModalImagesRiad from '../../Modal/ModalImagesRiad';
 
+
 const fetchRiads = async () => {
   const { data } = await axios.get('http://localhost:8000/api/riads');
   return data;

@@ -1,18 +1,5 @@
 import { Fragment, useEffect } from 'react';
-import {
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  Transition,
-} from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import Table from '../components/Admin/Tables/Riadtable'
-import RoomTable from '../components/Admin/Tables/Roomtable'
-import {Link,useLocation} from 'react-router-dom'
+
 
 const user = {
   name: 'Tom Cook',
