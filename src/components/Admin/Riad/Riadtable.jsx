@@ -9,7 +9,7 @@ import ModalImages from '../../Modal/ModalImages';
 import AddRoomModal from '../../Modal/AddRoomModal';
 import RoomsModal from '../../Modal/RoomsModal'; // Import the RoomsModal component
 import { CloudArrowUpIcon } from '@heroicons/react/24/outline'; 
-import Navbar from '../../Navbar/navbar';
+import Navbar from '../Navbar/navbar';
 import '../../../assets/style/loading.css';
 
 const fetchRiads = async () => {

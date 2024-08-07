@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 // Import the local image
-import userImage from '../../assets/Admin.jpg'; // Adjust the path as needed
+import userImage from '../../../assets/Admin.jpg'; // Adjust the path as needed
 // Sample navigation items
 const navigation = [
     { name: 'Home', href: '/ListUsers' },

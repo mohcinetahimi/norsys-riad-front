@@ -5,7 +5,7 @@ import { OpenContext } from '../../../contexts/OpenContext';
 import { useFlashMessage } from '../../../contexts/FlashMessageContext';
 import ModalAdd from '../../Modal/ModalAdd';
 import ModalEdit from '../../Modal/ModalEdit';
-import Navbar from '../../Navbar/navbar'; 
+import Navbar from '../Navbar/navbar';
 import axios from 'axios';
 import '../../../assets/style/loading.css';
 

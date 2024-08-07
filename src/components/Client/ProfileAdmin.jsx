@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import userImage from '../../assets/Admin.jpg'; // Path to default image
-import Navbar from '../Navbar/navbar';
+import Navbar from '../Admin/Navbar/navbar';
 
 function ProfilePage() {
     const [user, setUser] = useState({

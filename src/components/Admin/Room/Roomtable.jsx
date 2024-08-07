@@ -9,7 +9,7 @@ import ModalEdit from '../../Modal/ModalEdit';
 import UploadImage from '../../Test';
 import ModalImages from '../../Modal/ModalImages';
 import { CloudArrowUpIcon } from '@heroicons/react/24/solid'; 
-import Navbar from '../../Navbar/navbar';
+import Navbar from '../Navbar/navbar';
 import '../../../assets/style/loading.css';
 
 const fetchRooms = async () => {

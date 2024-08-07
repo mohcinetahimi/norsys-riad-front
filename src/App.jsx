@@ -16,13 +16,15 @@ import ListUsers from "./components/Admin/Users/ListUsers";
 import UserDetail from './components/Admin/Users/UserDetail';
 import EditUser from './components/Admin/Users/EditUser';
 import ProtectedRoute from './components/Admin/token/ProtectedRoute';
+import ProtectedRouteUser from './components/Admin/token/ProtectedRouteUser';
 import { OpenProvider } from './contexts/OpenContext';
 import { FlashMessageProvider } from './contexts/FlashMessageContext'; // Import FlashMessageProvider
 import AddRoomForm from './components/Admin/Room/AddRoomForm';
 import Table from './components/Admin/Room/Roomtable';
 import Unauthorized from './components/Admin/token/Unauthorized';
 import Table2 from './components/Admin/Riad/Riadtable';
-import ProfilePage from './components/Client/Profile';
+import ProfilePage from './components/Client/ProfileAdmin';
+import ProfileUser from './components/Client/ProfilUser'
 
 import './App.css';
 import Test from './components/Test';
@@ -54,10 +56,9 @@ function App() {
               <Route path="/Search" element={<SearchComponent />} />
               <Route path='/admin' element={<AdminLogin />} />
               <Route path="/cal" element={<CalendarRes />} />
-              {/* <Route path='/calendar' element={<Calendar />} /> */}
-              {/* <Route path='/resForm' element={<ReservationForm />} /> */}
               <Route path='/test' element={<Test />} />
               <Route path='/test2' element={<Test2 />} />
+              <Route path='/ProfileUser' element={<ProtectedRouteUser element={ProfileUser} requiredRole="ROLE_USER" />} />
 
               {/* Protected Routes */}
               <Route path='/admin/riads' element={<ProtectedRoute element={Table2} requiredRole="ROLE_ADMIN" />} />
