@@ -1,25 +1,35 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 
-export const OpenContext = createContext();
+// Create the context
+const OpenContext = createContext();
 
+// Create the provider component
 export const OpenProvider = ({ children }) => {
-    const [modals, setModals] = useState({
-        modalAdd: false,
-        modalEdit: false,
-        modalImages: false,
-    });
+  const [modals, setModals] = useState({});
 
-    const openModal = (modal) => {
-        setModals(prev => ({ ...prev, [modal]: true }));
-    };
+  const openModal = (modalName) => {
+    setModals(prev => ({ ...prev, [modalName]: true }));
+  };
 
-    const closeModal = (modal) => {
-        setModals(prev => ({ ...prev, [modal]: false }));
-    };
+  const closeModal = (modalName) => {
+    setModals(prev => ({ ...prev, [modalName]: false }));
+  };
 
-    return (
-        <OpenContext.Provider value={{ modals, openModal, closeModal }}>
-            {children}
-        </OpenContext.Provider>
-    );
+  return (
+    <OpenContext.Provider value={{ modals, openModal, closeModal }}>
+      {children}
+    </OpenContext.Provider>
+  );
 };
+
+// Custom hook to use the context
+export const useOpen = () => {
+  const context = useContext(OpenContext);
+  if (!context) {
+    throw new Error('useOpen must be used within an OpenProvider');
+  }
+  return context;
+};
+
+// Export the context
+export { OpenContext };

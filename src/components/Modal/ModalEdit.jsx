@@ -3,9 +3,11 @@ import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import EditRiad from '../Admin/Riad/EditRiad';
 import EditRoom from '../Admin/Room/EditRoom'; // Adjust the import path as needed
+import EditUser from '../Admin/Users/EditUser'; // Adjust the import path as needed
 
-export default function ModalNew({ riadId, roomId }) {
+export default function ModalEdit({ riadId, roomId, userId }) {
   const [open, setOpen] = useState(false);
+  // console.log("id user", userId);
 
   return (
     <>
@@ -32,7 +34,7 @@ export default function ModalNew({ riadId, roomId }) {
                       <div className="px-4 sm:px-6">
                         <div className="flex items-start justify-between">
                           <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
-                            {riadId ? 'Edit Riad' : 'Edit Room'}
+                            {riadId ? 'Edit Riad' : roomId ? 'Edit Room' : userId ? 'Edit User' : 'Edit Item'}
                           </Dialog.Title>
                           <div className="ml-3 flex h-7 items-center">
                             <button
@@ -50,6 +52,7 @@ export default function ModalNew({ riadId, roomId }) {
                       <div className="relative mt-6 flex-1 px-4 sm:px-6">
                         {riadId && <EditRiad riadId={riadId} onClose={() => setOpen(false)} />}
                         {roomId && <EditRoom roomId={roomId} onClose={() => setOpen(false)} />}
+                        {userId && <EditUser userId={userId} onClose={() => setOpen(false)} />}
                       </div>
                     </div>
                   </Dialog.Panel>

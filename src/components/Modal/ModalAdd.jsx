@@ -1,19 +1,30 @@
 import { Fragment, useContext } from 'react';
 import { Dialog, DialogPanel, DialogTitle, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import AddRoom from '../Admin/Room/AddRoom';
+import AddRoomForm from '../Admin/Room/AddRoomForm';
 import AddRiad from '../Admin/Riad/AddRiad';
-import { OpenContext } from '../../contexts/OpenContext';
+import AddUser from '../Admin/Users/AddUser'; // Import the AddUser component
+import { OpenContext } from '../../contexts/OpenContext'; // Verify this path
 
 export default function ModalAdd() {
   const { modals, closeModal } = useContext(OpenContext);
+
+  if (!modals) {
+    // Handle the case where modals is undefined or null
+    return null;
+  }
+
   const pathname = window.location.pathname;
 
-  const isRoomPage = pathname.includes('/Rooms');
-  const isRiadPage = pathname.includes('/Riads');
+  const isRoomPage = pathname.includes('Rooms');
+  const isRiadPage = pathname.includes('Riads');
+  const isUserPage = pathname.includes('Users'); // Check if the current page is a user page
 
   return (
-    <Transition show={modals.modalAdd} as={Fragment}>
+    <Transition
+      show={!!modals.modalAdd}  // Ensure `show` is a boolean
+      as={Fragment}
+    >
       <Dialog className="relative z-10" onClose={() => closeModal('modalAdd')}>
         <div className="fixed inset-0 bg-black bg-opacity-25" />
         <div className="fixed inset-0 overflow-hidden">
@@ -32,7 +43,7 @@ export default function ModalAdd() {
                     <div className="px-4 sm:px-6">
                       <div className="flex items-start justify-between">
                         <DialogTitle className="text-base font-semibold leading-6 text-gray-900">
-                          {isRoomPage ? 'Add New Room' : isRiadPage ? 'Add New Riad' : 'Add New Item'}
+                          {isRoomPage ? 'Add New Room' : isRiadPage ? 'Add New Riad' : isUserPage ? 'Add New User' : 'Add New Item'}
                         </DialogTitle>
                         <div className="ml-3 flex h-7 items-center">
                           <button
@@ -48,7 +59,7 @@ export default function ModalAdd() {
                       </div>
                     </div>
                     <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                      {isRoomPage ? <AddRoom /> : isRiadPage ? <AddRiad /> : <div>Select a page</div>}
+                      {isRoomPage ? <AddRoomForm /> : isRiadPage ? <AddRiad /> : isUserPage ? <AddUser /> : <div>Select a page</div>}
                     </div>
                   </div>
                 </DialogPanel>

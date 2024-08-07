@@ -1,150 +1,86 @@
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axiosInstance from '../Admin/token/config';
+import axios from 'axios';
 
-// Fetch room data
-const fetchRoomData = async (roomId) => {
-  try {
-    const { data } = await axiosInstance.get(`/rooms/${roomId}`);
-    return data;
-  } catch (error) {
-    if (error.response?.status === 404) {
-      return null;
-    }
-    console.error('Error fetching room data:', error);
-    throw error;
-  }
-};
-
-// Fetch riad data
+// Fetch Riad data
 const fetchRiadData = async (riadId) => {
-  try {
-    const { data } = await axiosInstance.get(`/riads/${riadId}`);
-    return data;
-  } catch (error) {
-    if (error.response?.status === 404) {
-      return null;
-    }
-    console.error('Error fetching riad data:', error);
-    throw error;
-  }
+  const { data } = await axios.get(`http://localhost:8000/api/riads/${riadId}`);
+  return data;
 };
 
-// Upload image
-const uploadImage = async ({ id, formData, type }) => {
-  try {
-    const response = await axiosInstance.post(`/${type}_images`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error uploading image:', error);
-    throw error;
-  }
+// Upload image for Riad
+const uploadImage = async ({ riadId, formData }) => {
+  const config = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  };
+  const response = await axios.post(`http://localhost:8000/api/riad_images`, formData, config);
+  return response.data;
 };
 
-// Delete image
-const deleteImage = async (imageId, type) => {
-  if (!imageId) {
-    throw new Error('Image ID is required for deletion');
-  }
-  try {
-    await axiosInstance.delete(`/${type}_images/${imageId}`);
-  } catch (error) {
-    console.error('Error deleting image:', error);
-    throw error;
-  }
+// Delete Riad image
+const deleteImage = async (imageId) => {
+  await axios.delete(`http://localhost:8000/api/riad_images/${imageId}`);
 };
 
-export default function ModalImages({ riadId, roomId }) {
+export default function ModalImagesRiad({ riadId }) {
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState(null);
   const queryClient = useQueryClient();
 
-  const type = roomId ? 'room' : 'riad';
-  const type2 = roomId ? 'rooom' : 'riiad';
-  const id = roomId || riadId;
-
-  const { data, error, isLoading, isError } = useQuery({
-    queryKey: [type, id],
-    queryFn: () => (type === 'room' ? fetchRoomData(id) : fetchRiadData(id)),
-    onSuccess: (data) => {
-      if (!data) {
-        console.error(`${type.charAt(0).toUpperCase() + type.slice(1)} not found`);
-        setOpen(false);
-      }
-    },
-    onError: (error) => {
-      console.error('Error fetching data:', error);
-      setOpen(false);
-    },
+  // Fetch Riad data including images
+  const { data: riadData, error, isLoading } = useQuery({
+    queryKey: ['riad', riadId],
+    queryFn: () => fetchRiadData(riadId),
   });
 
   const uploadMutation = useMutation({
-    mutationFn: ({ id, formData }) => uploadImage({ id, formData, type: type2 }),
+    mutationFn: ({ riadId, formData }) => uploadImage({ riadId, formData }),
     onSuccess: () => {
-      queryClient.invalidateQueries([type, id]);
+      queryClient.invalidateQueries(['riad', riadId]);
       setOpen(false);
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (imageId) => deleteImage(imageId, type),
+    mutationFn: (imageId) => deleteImage(imageId),
     onSuccess: () => {
-      queryClient.invalidateQueries([type, id]);
+      queryClient.invalidateQueries(['riad', riadId]);
     },
   });
 
-  useEffect(() => {
-    if (isError) {
-      console.error('Error fetching data:', error);
-    }
-  }, [isError, error]);
-
   const handleFileChange = (event) => {
-    const selectedFile = event.target.files[0];
-    setFile(selectedFile);
+    setFile(event.target.files[0]);
   };
 
   const handleUpload = () => {
-    if (!file) {
-      console.log('No file selected');
-      return;
-    }
-
     const formData = new FormData();
     formData.append('imageFile', file);
-    if (roomId) formData.append('room', `${roomId}`);
-    if (riadId) formData.append('riad', `${riadId}`);
+    formData.append('riad', `${riadId}`);
+    formData.append('imageName', file.name); // Ensure imageName is included
 
-    uploadMutation.mutate({ id, formData });
+    uploadMutation.mutate({ riadId, formData });
   };
 
   const handleDelete = (imageId) => {
-    if (!imageId) {
-      console.error('Image ID is not defined');
-      return;
-    }
-    console.log('Deleting image with ID:', imageId);
     deleteMutation.mutate(imageId);
   };
 
   if (isLoading) return <div>Loading images...</div>;
-  if (isError) return <div>Error loading images</div>;
-  if (!data || !data.images) return <div>No images found</div>;
+  if (error) return <div>Error loading images</div>;
 
   return (
     <>
       <button onClick={() => setOpen(true)} className="text-indigo-600 hover:text-indigo-900">
-        Manage Images
+        Upload Image
       </button>
       <Transition show={open} as={Fragment}>
         <Dialog className="relative z-10" onClose={() => setOpen(false)}>
           <div className="fixed inset-0 bg-black bg-opacity-25" />
+
           <div className="fixed inset-0 overflow-hidden">
             <div className="absolute inset-0 overflow-hidden">
               <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
@@ -161,7 +97,7 @@ export default function ModalImages({ riadId, roomId }) {
                       <div className="px-4 sm:px-6">
                         <div className="flex items-start justify-between">
                           <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
-                            Manage Images for {type.charAt(0).toUpperCase() + type.slice(1)} {id}
+                            Upload Image
                           </Dialog.Title>
                           <div className="ml-3 flex h-7 items-center">
                             <button
@@ -177,15 +113,10 @@ export default function ModalImages({ riadId, roomId }) {
                         </div>
                       </div>
                       <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                        <div className="flex flex-col items-center">
-                          <h2 className="text-lg font-medium">
-                            {type.charAt(0).toUpperCase() + type.slice(1)}: {type === 'room' ? data.riad.name : data.name}
-                          </h2>
-                          <h3 className="text-md font-medium mt-2">
-                            Images for {type.charAt(0).toUpperCase() + type.slice(1)} {id}
-                          </h3>
-                          <div className="flex flex-wrap mt-4">
-                            {data.images.map((image) => (
+                        <div>
+                          <h2>Images for Riad {riadId}</h2>
+                          <div className="flex flex-wrap">
+                            {riadData.images && riadData.images.map((image) => (
                               <div key={image.id} className="relative w-32 h-32 m-2">
                                 <img
                                   src={`http://localhost:8000${image.imageUrl}`}

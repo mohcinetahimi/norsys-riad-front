@@ -12,7 +12,7 @@ const schema = yup.object().shape({
   username: yup
     .string()
     .required('Username is required')
-    .min(10, 'Username must be at least 10 characters long')
+    .min(8, 'Username must be at least 8 characters long')
     .matches(
       /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+])[A-Za-z0-9!@#$%^&*()_+]{6,}$/,
       'Username must contain at least one uppercase letter, one number, and one symbol'

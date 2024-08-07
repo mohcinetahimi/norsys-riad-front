@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import axiosInstance from '../token/config'; // Import the configured axios instance
 import * as yup from 'yup';
+import { useFlashMessage } from '../../../contexts/FlashMessageContext'; // Import the hook
 
 const schema = yup.object().shape({
   name: yup.string().required('Name is required').max(100, 'Name cannot exceed 100 characters'),
@@ -13,12 +14,12 @@ const schema = yup.object().shape({
 });
 
 const getRiadById = async (riadId) => {
-  const response = await axios.get(`http://localhost:8000/api/riads/${riadId}`);
+  const response = await axiosInstance.get(`/riads/${riadId}`); // Use axiosInstance
   return response.data;
 };
 
 const editRiad = async (riad) => {
-  const response = await axios.put(`http://localhost:8000/api/riads/${riad.id}`, riad);
+  const response = await axiosInstance.put(`/riads/${riad.id}`, riad); // Use axiosInstance
   return response.data;
 };
 
@@ -26,11 +27,13 @@ const EditRiad = ({ riadId, onClose }) => {
   const { register, handleSubmit, setValue, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
-
+  const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();
+  const { showFlashMessage } = useFlashMessage(); // Use flash message context
 
   useEffect(() => {
     const fetchRiad = async () => {
+      setLoading(true);
       try {
         const riadData = await getRiadById(riadId);
         setValue('name', riadData.name);
@@ -39,6 +42,8 @@ const EditRiad = ({ riadId, onClose }) => {
         setValue('city', riadData.city);
       } catch (error) {
         console.error('Error fetching riad data:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -51,10 +56,12 @@ const EditRiad = ({ riadId, onClose }) => {
     mutationFn: editRiad,
     onSuccess: () => {
       queryClient.invalidateQueries(['riads']);
+      showFlashMessage('Riad updated successfully!', 'success'); // Show success message
       onClose();
     },
     onError: (error) => {
       console.error('Editing riad failed:', error);
+      showFlashMessage('Failed to update riad. Please try again.', 'error'); // Show error message
     }
   });
 
@@ -140,9 +147,10 @@ const EditRiad = ({ riadId, onClose }) => {
           <button type="button" className="text-sm font-semibold leading-6 text-gray-900" onClick={onClose}>Cancel</button>
           <button
             type="submit"
-            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            className={`rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm ${loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-500'} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+            disabled={loading}
           >
-            Save
+            {loading ? 'Saving...' : 'Save'}
           </button>
         </div>
       </form>

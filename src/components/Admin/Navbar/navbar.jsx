@@ -1,37 +1,62 @@
-import React from 'react';
-import { Disclosure, Transition, Menu } from '@headlessui/react'; // Import Menu component
-import { BellIcon, XMarkIcon, Bars3Icon } from '@heroicons/react/24/outline'; // Heroicons v2
-import classNames from 'classnames'; // Import classNames
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import React, { useState, useEffect } from 'react';
+import { Disclosure, Transition, Menu } from '@headlessui/react';
+import { BellIcon, XMarkIcon, Bars3Icon } from '@heroicons/react/24/outline';
+import classNames from 'classnames';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+// Import the local image
+import userImage from '../../../assets/Admin.jpg'; // Adjust the path as needed
+// Sample navigation items
 const navigation = [
     { name: 'Home', href: '/ListUsers' },
-    { name: 'Riads', href: '/admin/Riads' },
+    { name: 'Riads', href: '/listRiads' },
     { name: 'Rooms', href: '/ListRooms' }
 ];
 
-const user = {
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    imageUrl: 'https://example.com/avatar.jpg',
-};
-
+// User navigation items
 const userNavigation = [
-    { name: 'Profile', href: '#' },
+    { name: 'Profile', href: '/profile' },
     { name: 'Settings', href: '#' },
-    { name: 'Sign out', href: '/Admin' },
+    { name: 'Sign out', href: '#' },
 ];
 
 function Navbar() {
-    const navigate = useNavigate(); // For navigation after logout
+    const [user, setUser] = useState({ name: '', email: '', imageUrl: userImage });
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                const token = localStorage.getItem('token_admin');
+
+                if (token) {
+                    const response = await axios.get('http://localhost:8000/api/user_info', {
+                        params: { token },
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                        },
+                    });
+
+                    setUser({
+                        name: response.data.username || 'Unknown',
+                        email: response.data.email, 
+                        firstName: response.data.firstname,
+                        imageUrl: userImage // Use the imported image
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to fetch user info:', error);
+            }
+        };
+
+        fetchUserInfo();
+    }, []);
 
     const handleLogout = async () => {
         try {
-            // Get the authentication token from localStorage
             const token = localStorage.getItem('token_admin');
 
-            // Send the logout request to the API
             await axios.post('http://localhost:8000/api/logout', {}, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -39,16 +64,15 @@ function Navbar() {
                 }
             });
 
-          
             localStorage.removeItem('token_admin');
             navigate('/Admin'); 
 
         } catch (error) {
             console.error('Logout failed:', error);
-          
+            // Optionally, show an error message to the user
         }
     };
-    
+
     return (
         <Disclosure as="nav" className="bg-indigo-600">
             {({ open }) => (
@@ -70,9 +94,7 @@ function Navbar() {
                                                 key={item.name}
                                                 href={item.href}
                                                 className={classNames(
-                                                    item.current
-                                                        ? 'bg-indigo-700 text-white'
-                                                        : 'text-white hover:bg-indigo-500 hover:bg-opacity-75',
+                                                    'text-white hover:bg-indigo-500 hover:bg-opacity-75',
                                                     'rounded-md px-3 py-2 text-sm font-medium'
                                                 )}
                                                 aria-current={item.current ? 'page' : undefined}
@@ -156,9 +178,7 @@ function Navbar() {
                                     as="a"
                                     href={item.href}
                                     className={classNames(
-                                        item.current
-                                            ? 'bg-indigo-700 text-white'
-                                            : 'text-white hover:bg-indigo-500 hover:bg-opacity-75',
+                                        'text-white hover:bg-indigo-500 hover:bg-opacity-75',
                                         'block rounded-md px-3 py-2 text-base font-medium'
                                     )}
                                     aria-current={item.current ? 'page' : undefined}
@@ -192,7 +212,10 @@ function Navbar() {
                                         as="a"
                                         href={item.name === 'Sign out' ? '#' : item.href}
                                         onClick={item.name === 'Sign out' ? handleLogout : undefined}
-                                        className="block rounded-md px-3 py-2 text-base font-medium text-white hover:bg-indigo-500 hover:bg-opacity-75"
+                                        className={classNames(
+                                            'block rounded-md px-3 py-2 text-base font-medium',
+                                            item.name === 'Sign out' ? 'text-red-500' : 'text-white hover:bg-indigo-500 hover:bg-opacity-75'
+                                        )}
                                     >
                                         {item.name}
                                     </Disclosure.Button>

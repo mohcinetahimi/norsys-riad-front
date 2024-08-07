@@ -4,8 +4,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import * as yup from 'yup';
+import axiosInstance from '../token/config'
 
-// Define schema for Room entity
+
 const schema = yup.object().shape({
   name: yup.string().required('Name is required').max(100, 'Name cannot exceed 100 characters'),
   price: yup.number().required('Price is required').min(0, 'Price cannot be negative'),
@@ -15,7 +16,7 @@ const schema = yup.object().shape({
 
 // Fetch Room by ID
 const getRoomById = async (roomId) => {
-  const response = await axios.get(`http://localhost:8000/api/rooms/${roomId}`, {
+  const response = await axiosInstance.get(`/rooms/${roomId}`, {
     headers: {
       'accept': 'application/ld+json',
     },
@@ -25,11 +26,7 @@ const getRoomById = async (roomId) => {
 
 // Edit Room entity
 const editRoom = async (room) => {
-  const response = await axios.put(`http://localhost:8000/api/rooms/${room.id}`, room, {
-    headers: {
-      'Content-Type': 'application/ld+json',
-    },
-  });
+  const response = await axiosInstance.put(`/rooms/${room.id}`, room);
   return response.data;
 };
 

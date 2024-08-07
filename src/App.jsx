@@ -1,69 +1,85 @@
 // src/App.jsx
-import { useState } from 'react'
+import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
-import Login from './components/Auth/Login'
-import Register from './components/Auth/Register'
-import RiadsAdmin from './components/Admin/Riad/RiadsAdmin.jsx'
-import PasswordReset from './components/PasswordRequest/resetpassword';
-import { ForgotPassword } from './components/PasswordRequest/ForgotPassword';
-import HomePage from "./pages/HomePage.jsx";
-import RiadDetail from "./pages/RiadDetail.jsx";
-// import AddRoom from "./components/Admin/Room/addroom.jsx";
-import AddRiad from "./components/Admin/Riad/AddRiad.jsx";
-import AdminLogin from "./components/Admin/Auth/AdminLogin.jsx";
-import ListRooms from "./components/Admin/Room/ListRooms.jsx";
-import ListUsers from "./components/Admin/Users/ListUsers.jsx";
-import UserDetail from './components/Admin/Users/UserDetail.jsx';
-import EditUser from './components/Admin/Users/EditUser.jsx';
-import ProtectedRoute from './components/Admin/token/ProtectedRoute';
-import { OpenProvider } from './contexts/OpenContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+import Login from './components/Auth/Login';
+import Register from './components/Auth/Register';
+import PasswordReset from './components/PasswordRequest/resetpassword';
+import { ForgotPassword } from './components/PasswordRequest/ForgotPassword';
+import HomePage from "./pages/HomePage";
+import RiadDetail from "./pages/RiadDetail";
+import AddRiad from "./components/Admin/Riad/AddRiad";
+import AdminLogin from "./components/Admin/Auth/AdminLogin";
+import ListRooms from "./components/Admin/Room/ListRooms";
+import ListUsers from "./components/Admin/Users/ListUsers";
+import UserDetail from './components/Admin/Users/UserDetail';
+import EditUser from './components/Admin/Users/EditUser';
+import ProtectedRoute from './components/Admin/token/ProtectedRoute';
+import ProtectedRouteUser from './components/Admin/token/ProtectedRouteUser';
+import { OpenProvider } from './contexts/OpenContext';
+import { FlashMessageProvider } from './contexts/FlashMessageContext'; // Import FlashMessageProvider
+import AddRoomForm from './components/Admin/Room/AddRoomForm';
+import Table from './components/Admin/Room/Roomtable';
+import Unauthorized from './components/Admin/token/Unauthorized';
+import Table2 from './components/Admin/Riad/Riadtable';
+import ProfilePage from './components/Client/ProfileAdmin';
+import ProfileUser from './components/Client/ProfilUser'
 
-
-import './App.css'
+import './App.css';
 import Test from './components/Test';
-import Test2 from './components/Test2.jsx'
-import HomePage from "./pages/HomePage.jsx";
-import RiadDetail from "./pages/RiadDetail.jsx";
-import Header from "./components/Riad/Header.jsx";
-import RiadList from "./components/Riad/RiadList.jsx";
-import Incentive from "./components/Riad/Incentive.jsx";
+import Test2 from './components/Test2';
+import Header from "./components/Riad/Header";
+import RiadList from "./components/Riad/RiadList";
+import Incentive from "./components/Riad/Incentive";
+// import Calendar from "./components/Reservation/Calendar";
+// import ReservationForm from './components/Reservation/ReservationForm';
+import CalendarRes from "./components/Admin/Reservation/CalendarRes";
+import SearchComponent from './components/Admin/SearchComponent';
 
 
 function App() {
   const queryClient = new QueryClient();
 
   return (
-    <>
-      <QueryClientProvider client={queryClient}>
-        <OpenProvider>
+    <QueryClientProvider client={queryClient}>
+      <OpenProvider>
+        <FlashMessageProvider>
           <BrowserRouter>
             <Routes>
-              <Route path='/' element={<HomePage />}/>
-              <Route path='/register' element={<Register/>}/>
-              <Route path='/login' element={<Login/>}/>
-              <Route path='/forgotPassword' element={<ForgotPassword/>}/>
+              <Route path='/' element={<HomePage />} />
+              <Route path='/register' element={<Register />} />
+              <Route path='/login' element={<Login />} />
+              <Route path='/forgotPassword' element={<ForgotPassword />} />
+              <Route path='/riad/:id' element={<RiadDetail />} />
               <Route path="/password-reset" element={<PasswordReset />} />
-              <Route path='/admin' element={<AdminLogin/>}/> 
+              <Route path="/Search" element={<SearchComponent />} />
+              <Route path='/admin' element={<AdminLogin />} />
+              <Route path="/cal" element={<CalendarRes />} />
+              <Route path='/test' element={<Test />} />
+              <Route path='/test2' element={<Test2 />} />
+              <Route path='/ProfileUser' element={<ProtectedRouteUser element={ProfileUser} requiredRole="ROLE_USER" />} />
 
               {/* Protected Routes */}
-              <Route path='/admin/riads' element={<ProtectedRoute element={RiadsAdmin} />} />
-              <Route path='/riad/:id' element={<ProtectedRoute element={RiadDetail} />} />
-              <Route path="/addRoom" element={<ProtectedRoute element={AddRoom} />} />
-              <Route path="/addRiad" element={<ProtectedRoute element={AddRiad} />} />
-             
-              <Route path="/listRooms" element={<ProtectedRoute element={ListRooms} />} />
-              <Route path="/listUsers" element={<ProtectedRoute element={ListUsers} />} />
-              <Route path="/users/:userId" element={<ProtectedRoute element={UserDetail} />} />
-              <Route path="/edit-user/:userId" element={<ProtectedRoute element={EditUser} />} />
+              <Route path='/admin/riads' element={<ProtectedRoute element={Table2} requiredRole="ROLE_ADMIN" />} />
+              <Route path='/profile' element={<ProtectedRoute element={ProfilePage} requiredRole="ROLE_ADMIN" />} />
+              
+              <Route path="/addRoom" element={<ProtectedRoute element={AddRoomForm} requiredRole="ROLE_ADMIN" />} />
+              <Route path="/addRiad" element={<ProtectedRoute element={AddRiad} requiredRole="ROLE_ADMIN" />} />
+              <Route path="/listRooms" element={<ProtectedRoute element={Table} requiredRole="ROLE_ADMIN" />} />
+              <Route path="/listRiads" element={<ProtectedRoute element={Table2} requiredRole="ROLE_ADMIN" />} />
+              <Route path="/listUsers" element={<ProtectedRoute element={ListUsers} requiredRole="ROLE_ADMIN" />} />
+              <Route path="/users/:userId" element={<ProtectedRoute element={UserDetail} requiredRole="ROLE_ADMIN" />} />
+              <Route path="/edit-user/:userId" element={<ProtectedRoute element={EditUser} requiredRole="ROLE_ADMIN" />} />
+              
+              {/* Unauthorized Route */}
+              <Route path="/unauthorized" element={<Unauthorized />} />
             </Routes>
           </BrowserRouter>
-        </OpenProvider>
-      </QueryClientProvider>
-    </>
-  )
+        </FlashMessageProvider>
+      </OpenProvider>
+    </QueryClientProvider>
+  );
 }
 
 export default App;

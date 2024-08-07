@@ -13,12 +13,12 @@ const ProtectedRoute = ({ element: Component, requiredRole, ...rest }) => {
 
   useEffect(() => {
     const checkTokenValidity = async () => {
-      const token = localStorage.getItem('token_admin');
+      const token = localStorage.getItem('token');
 
       if (!token) {
         showFlashMessage('Your session has ended. Please log in again.');
         setIsValid(false);
-        navigate('/admin');
+        navigate('/login');
         return;
       }
 
@@ -29,7 +29,7 @@ const ProtectedRoute = ({ element: Component, requiredRole, ...rest }) => {
           },
         };
 
-        const response = await axios.post('http://localhost:8000/api/validate-token', { admin: true }, config);
+        const response = await axios.post('http://localhost:8000/api/validate-token', { user: true }, config);
 
         if (response.status === 200 && response.data.valid) {
           setIsValid(true);
@@ -37,7 +37,7 @@ const ProtectedRoute = ({ element: Component, requiredRole, ...rest }) => {
         } else {
           showFlashMessage('Unauthorized access.');
           setIsValid(false);
-          navigate('/admin');
+          navigate('/user');
         }
       } catch (error) {
         if (error.response && error.response.status === 401) {
@@ -47,14 +47,14 @@ const ProtectedRoute = ({ element: Component, requiredRole, ...rest }) => {
             showFlashMessage('Unauthorized access.');
           }
           setIsValid(false);
-          navigate('/admin');
+          navigate('/user');
         } else {
           console.error('Token validation failed:', error);
           showFlashMessage('An error occurred while validating the token.');
           setIsValid(false);
-          navigate('/admin');
+          navigate('/user');
         }
-        localStorage.removeItem('token_admin');
+        localStorage.removeItem('token_user');
       }
     };
 
@@ -68,7 +68,7 @@ const ProtectedRoute = ({ element: Component, requiredRole, ...rest }) => {
   }
 
   if (!isValid) {
-    return <Navigate to="/admin" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   if (requiredRole && role !== requiredRole) {

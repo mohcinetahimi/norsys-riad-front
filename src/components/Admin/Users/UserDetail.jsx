@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import Navbar from '../pages/navbar';
+import Navbar from '../Navbar/navbar';
 
 const UserDetail = () => {
     const { userId } = useParams();
@@ -41,9 +41,11 @@ const UserDetail = () => {
         fetchUser();
     }, [userId, navigate]);
 
-    if (loading) {
-        return <p>Loading...</p>;
-    }
+    if (loading) return (
+        <div className="flex justify-center items-center min-h-screen">
+          <div className="spinner"></div>
+        </div>
+      );
 
     if (error) {
         return <p>Error: {error.message}</p>;
