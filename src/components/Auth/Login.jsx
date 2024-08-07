@@ -12,7 +12,7 @@ export default function Login() {
   const schema = yup.object().shape({
     username: yup.string().required('Username is required'),
     password: yup
-      .string()
+      .string()  
       .required('Password is required')
   });
 
@@ -30,7 +30,7 @@ export default function Login() {
       if (response.status === 200 && response.data.token) {
         localStorage.setItem('token', response.data.token);
         console.log('Login successful', response.data);
-        navigate('/admin/Riads');
+        navigate('/');
       } else {
         setErrorMessage(' Please check Username and Password try again.');
       }
