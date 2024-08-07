@@ -5,12 +5,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { OpenContext } from '../../../contexts/OpenContext';
 import axios from 'axios';
 import * as yup from 'yup';
+export default function AddRiad() {
 
-const schema = yup.object().shape({
-  name: yup.string().required('Name is required').max(100, 'Name cannot exceed 100 characters'),
-  description: yup.string().required('Description is required').max(500, 'Description cannot exceed 500 characters'),
-  address: yup.string().required('Address is required').max(200, 'Address cannot exceed 200 characters'),
-  city: yup.string().required('City is required').max(100, 'City cannot exceed 100 characters'),
+  const schema = yup.object().shape({
+    name: yup.string().required('Name is required').max(100, 'Name cannot exceed 100 characters'),
+    description: yup.string().required('Description is required').max(500, 'Description cannot exceed 500 characters'),
+    address: yup.string().required('Address is required').max(200, 'Address cannot exceed 200 characters'),
+    city: yup.string().required('City is required').max(100, 'City cannot exceed 100 characters'),
 });
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
@@ -150,6 +151,4 @@ const schema = yup.object().shape({
       </form>
     </div>
   );
-};
-
-export default AddRiad;
+}

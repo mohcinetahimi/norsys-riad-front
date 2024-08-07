@@ -8,7 +8,6 @@ import RiadsAdmin from './components/Admin/Riad/RiadsAdmin.jsx'
 import PasswordReset from './components/PasswordRequest/resetpassword';
 import { ForgotPassword } from './components/PasswordRequest/ForgotPassword';
 import HomePage from "./pages/HomePage.jsx";
-import RiadDetail from "./pages/RiadDetail.jsx";
 // import AddRoom from "./components/Admin/Room/addroom.jsx";
 import AddRiad from "./components/Admin/Riad/AddRiad.jsx";
 import AdminLogin from "./components/Admin/Auth/AdminLogin.jsx";
@@ -25,11 +24,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import './App.css'
 import Test from './components/Test';
 import Test2 from './components/Test2.jsx'
-import HomePage from "./pages/HomePage.jsx";
 import RiadDetail from "./pages/RiadDetail.jsx";
 import Header from "./components/Riad/Header.jsx";
 import RiadList from "./components/Riad/RiadList.jsx";
 import Incentive from "./components/Riad/Incentive.jsx";
+import Addroom from "./components/Admin/Room/addroom.jsx";
 
 
 function App() {
@@ -51,7 +50,7 @@ function App() {
               {/* Protected Routes */}
               <Route path='/admin/riads' element={<ProtectedRoute element={RiadsAdmin} />} />
               <Route path='/riad/:id' element={<ProtectedRoute element={RiadDetail} />} />
-              <Route path="/addRoom" element={<ProtectedRoute element={AddRoom} />} />
+              <Route path="/addRoom" element={<ProtectedRoute element={Addroom} />} />
               <Route path="/addRiad" element={<ProtectedRoute element={AddRiad} />} />
              
               <Route path="/listRooms" element={<ProtectedRoute element={ListRooms} />} />
