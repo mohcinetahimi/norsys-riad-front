@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@headlessui/react';
 import axios from 'axios';
+import { Button } from '@headlessui/react';
 import AddRiad from '../Riad/AddRiad';
 import { OpenContext } from '../../../contexts/OpenContext';
 import ModalAdd from '../../Modal/ModalAdd';
@@ -10,6 +10,7 @@ import UploadImage from '../../Test';
 import ModalImages from '../../Modal/ModalImages';
 import { CloudArrowUpIcon } from '@heroicons/react/24/solid'; 
 import Navbar from '../../Navbar/navbar';
+import '../../../assets/style/loading.css';
 
 const fetchRooms = async () => {
   const token = localStorage.getItem('token_admin');
@@ -20,7 +21,6 @@ const fetchRooms = async () => {
       },
     });
 
-    // Ensure that data['hydra:member'] is an array
     if (!Array.isArray(data['hydra:member'])) {
       throw new Error('Invalid data format');
     }
@@ -31,7 +31,6 @@ const fetchRooms = async () => {
     throw new Error('Failed to fetch rooms');
   }
 };
-
 
 const extractIdFromUrl = (url) => {
   const parts = url.split('/');
@@ -62,30 +61,47 @@ export default function Table() {
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return (
+    <div className="spinner-container">
+      <div className="spinner"></div>
+      <div className="loading-text">Loading...</div>
+    </div>
+  );  
   if (error) return <div>Error loading data</div>;
 
   return (
     <>
       <Navbar />
       <div className="px-4 sm:px-6 lg:px-8">
-        <input 
-          className='ml-44 p-3 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 ease-in-out' 
-          type='text' 
-          placeholder='Start your search...' 
-          onChange={(e) => {
-            setSearch(e.target.value.toLowerCase());
-          }} 
-        />
-        <div className="sm:flex sm:items-center">
-          <div className="sm:flex-auto">
-            <h1 className="text-base font-semibold leading-6 text-gray-900">Rooms</h1>
-            <p className="mt-2 text-sm text-gray-700">A table of Rooms.</p>
+        <div className="flex items-center justify-between p-4 bg-white border-b border-gray-200 rounded-lg">
+          <div className="text-lg font-semibold text-gray-900">
+            Rooms
           </div>
-          <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-           
+          <div className="flex items-center space-x-4">
+            <input 
+              className='p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 transition duration-150 ease-in-out'
+              type='text'
+              placeholder='Search...'
+              value={search}
+              onChange={(e) => setSearch(e.target.value.toLowerCase())}
+            />
+            {/* <button
+              type="button"
+              onClick={() => openModal('modalAdd')}
+              className="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
+            >
+              Add
+            </button> */}
           </div>
         </div>
+
+        <div className="sm:flex sm:items-center">
+          <div className="sm:flex-auto">
+           
+            <p className="mt-2 text-sm text-gray-700">A table of Rooms.</p>
+          </div>
+        </div>
+
         <div className="mt-8 flow-root">
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -121,6 +137,12 @@ export default function Table() {
                       className="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900"
                     >
                       Price
+                    </th>
+                    <th
+                      scope="col"
+                      className="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Actions
                     </th>
                   </tr>
                 </thead>

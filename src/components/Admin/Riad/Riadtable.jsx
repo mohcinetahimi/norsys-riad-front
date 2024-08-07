@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axiosInstance from '../token/config';
 import { OpenContext } from '../../../contexts/OpenContext';
@@ -8,8 +8,9 @@ import ModalEdit from '../../Modal/ModalEdit';
 import ModalImages from '../../Modal/ModalImages';
 import AddRoomModal from '../../Modal/AddRoomModal';
 import RoomsModal from '../../Modal/RoomsModal'; // Import the RoomsModal component
-import { CloudArrowUpIcon, XMarkIcon } from '@heroicons/react/24/outline'; 
+import { CloudArrowUpIcon } from '@heroicons/react/24/outline'; 
 import Navbar from '../../Navbar/navbar';
+import '../../../assets/style/loading.css';
 
 const fetchRiads = async () => {
   const { data } = await axiosInstance.get('/riads');
@@ -21,12 +22,21 @@ const Table = () => {
   const { showFlashMessage } = useFlashMessage();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
+  const [filteredRiads, setFilteredRiads] = useState([]);
   const [selectedRiadId, setSelectedRiadId] = useState(null);
 
   const { data: riads = {}, error, isLoading } = useQuery({
     queryKey: ['riads'],
     queryFn: fetchRiads
   });
+
+  useEffect(() => {
+    if (riads && Array.isArray(riads['hydra:member'])) {
+      setFilteredRiads(riads['hydra:member'].filter(riad =>
+        riad.name.toLowerCase().includes(search.toLowerCase())
+      ));
+    }
+  }, [search, riads]);
 
   const deleteRiad = async (id) => {
     try {
@@ -44,42 +54,42 @@ const Table = () => {
     return parts[parts.length - 1];
   };
 
-  const riadsList = Array.isArray(riads['hydra:member']) ? riads['hydra:member'] : [];
-  const filteredRiads = riadsList.filter(riad =>
-    riad.name.toLowerCase().includes(search.toLowerCase())
-  );
-
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return (
+    <div className="spinner-container">
+      <div className="spinner"></div>
+      <div className="loading-text">Loading...</div>
+    </div>
+  );  
   if (error) return <div>Error loading data: {error.message}</div>;
 
   return (
     <>
     <Navbar />
     <div className="px-4 sm:px-6 lg:px-8">
-      <input 
-        className='ml-44 p-3 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 ease-in-out' 
-        type='text' 
-        placeholder='Start your search...'
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-
-      <div className="sm:flex sm:items-center">
-        <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">Riads</h1>
-          <p className="mt-2 text-sm text-gray-700">A table of Riads.</p>
+      <div className="flex items-center justify-between p-4 bg-white border-b border-gray-200 rounded-lg">
+        <div className="text-lg font-semibold text-gray-900">
+          Riads
         </div>
-        <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+        <div className="flex items-center space-x-4">
+          <input 
+            className='p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 transition duration-150 ease-in-out'
+            type='text'
+            placeholder='Search...'
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
           <button
             type="button"
             onClick={() => openModal('modalAdd')}
-            className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            className="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
           >
             Add
           </button>
           <ModalAdd />
         </div>
       </div>
+
+      <p className="mt-2 text-sm text-gray-700">A table of Riads.</p>
 
       <div className="mt-8 flow-root">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -140,6 +150,7 @@ const Table = () => {
                           >
                             Add Room
                           </button>
+                          <ModalAdd />
                           <button
                             type="button"
                             onClick={() => {

@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { StarIcon } from '@heroicons/react/20/solid';
 import RoomList from './RoomList.jsx'; // Import the RoomList component
 import axios from 'axios'; // Import axios for data fetching
-
+import '../../assets/style/loading.css'; // Import the loading spinner CSS
 // Base URL for the API
 const BASE_URL = 'http://localhost:8000';
 
@@ -40,7 +40,10 @@ export default function RiadOverview() {
     }, [id]);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return  <div className="spinner-container">
+                    <div className="spinner"></div>
+                    <div className="loading-text">Loading...</div>
+                </div>
     }
 
     if (!riad) {

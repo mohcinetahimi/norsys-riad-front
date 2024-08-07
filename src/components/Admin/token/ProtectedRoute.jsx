@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useFlashMessage } from '../../../contexts/FlashMessageContext'; // Import useFlashMessage
+import '../../../assets/style/loading.css';
+
 
 const ProtectedRoute = ({ element: Component, requiredRole, ...rest }) => {
   const [isValid, setIsValid] = useState(null); // null for initial state, true/false for validation result
@@ -60,7 +62,9 @@ const ProtectedRoute = ({ element: Component, requiredRole, ...rest }) => {
   }, [navigate, showFlashMessage]); // Removed `isValid` dependency to avoid infinite loop
 
   if (isValid === null) {
-    return <div>Loading...</div>; // Or a loading spinner, etc.
+    return  <div className="flex justify-center items-center min-h-screen">
+    <div className="spinner"></div>
+  </div>// Or a loading spinner, etc.
   }
 
   if (!isValid) {

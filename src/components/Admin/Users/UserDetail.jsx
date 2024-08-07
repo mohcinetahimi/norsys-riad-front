@@ -41,9 +41,11 @@ const UserDetail = () => {
         fetchUser();
     }, [userId, navigate]);
 
-    if (loading) {
-        return <p>Loading...</p>;
-    }
+    if (loading) return (
+        <div className="flex justify-center items-center min-h-screen">
+          <div className="spinner"></div>
+        </div>
+      );
 
     if (error) {
         return <p>Error: {error.message}</p>;

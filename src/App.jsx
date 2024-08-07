@@ -30,9 +30,11 @@ import Test2 from './components/Test2';
 import Header from "./components/Riad/Header";
 import RiadList from "./components/Riad/RiadList";
 import Incentive from "./components/Riad/Incentive";
-import Calendar from "./components/Reservation/Calendar";
-import ReservationForm from './components/Reservation/ReservationForm';
+// import Calendar from "./components/Reservation/Calendar";
+// import ReservationForm from './components/Reservation/ReservationForm';
 import CalendarRes from "./components/Admin/Reservation/CalendarRes";
+import SearchComponent from './components/Admin/SearchComponent';
+
 
 function App() {
   const queryClient = new QueryClient();
@@ -47,18 +49,20 @@ function App() {
               <Route path='/register' element={<Register />} />
               <Route path='/login' element={<Login />} />
               <Route path='/forgotPassword' element={<ForgotPassword />} />
+              <Route path='/riad/:id' element={<RiadDetail />} />
               <Route path="/password-reset" element={<PasswordReset />} />
+              <Route path="/Search" element={<SearchComponent />} />
               <Route path='/admin' element={<AdminLogin />} />
               <Route path="/cal" element={<CalendarRes />} />
-              <Route path='/calendar' element={<Calendar />} />
-              <Route path='/resForm' element={<ReservationForm />} />
+              {/* <Route path='/calendar' element={<Calendar />} /> */}
+              {/* <Route path='/resForm' element={<ReservationForm />} /> */}
               <Route path='/test' element={<Test />} />
               <Route path='/test2' element={<Test2 />} />
 
               {/* Protected Routes */}
               <Route path='/admin/riads' element={<ProtectedRoute element={Table2} requiredRole="ROLE_ADMIN" />} />
               <Route path='/profile' element={<ProtectedRoute element={ProfilePage} requiredRole="ROLE_ADMIN" />} />
-              <Route path='/riad/:id' element={<ProtectedRoute element={RiadDetail} requiredRole="ROLE_ADMIN" />} />
+              
               <Route path="/addRoom" element={<ProtectedRoute element={AddRoom} requiredRole="ROLE_ADMIN" />} />
               <Route path="/addRiad" element={<ProtectedRoute element={AddRiad} requiredRole="ROLE_ADMIN" />} />
               <Route path="/listRooms" element={<ProtectedRoute element={Table} requiredRole="ROLE_ADMIN" />} />

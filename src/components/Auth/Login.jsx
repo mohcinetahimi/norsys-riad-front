@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -11,37 +11,41 @@ export default function Login() {
 
   const schema = yup.object().shape({
     username: yup.string().required('Username is required'),
-    password: yup
-      .string()  
-      .required('Password is required')
+    password: yup.string().required('Password is required'),
   });
 
   const { register, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
   const navigate = useNavigate();
+
+  // Check if the user is already logged in
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/'); // Redirect to the homepage or any other page if already logged in
+    }
+  }, [navigate]);
+
   const onSubmit = async (data) => {
     try {
       if (!data.username || !data.password) {
         setErrorMessage('Both username and password are required.');
         return;
       }
-  
+
       const response = await axios.post('http://localhost:8000/api/login', data);
-  
+
       if (response.status === 200 && response.data.token) {
         localStorage.setItem('token', response.data.token);
         console.log('Login successful', response.data);
         navigate('/');
       } else {
-        setErrorMessage(' Please check Username and Password try again.');
+        setErrorMessage('Please check Username and Password and try again.');
       }
     } catch (error) {
       console.error('Login failed', error.response ? error.response.data : error.message);
-      
-      // Display error message from backend response or a default message
-      setErrorMessage(error.response?.data?.error +'\nPlease check Username and Password try again.');
+      setErrorMessage(error.response?.data?.error + '\nPlease check Username and Password and try again.');
     }
   };
-  
 
   return (
     <>
@@ -124,7 +128,6 @@ export default function Login() {
               Register Now
             </Link>
           </div>
-
         </div>
       </div>
     </>

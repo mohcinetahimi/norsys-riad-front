@@ -3,6 +3,7 @@ import { Dialog, DialogPanel, DialogTitle, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import AddRoom from '../Admin/Room/AddRoom';
 import AddRiad from '../Admin/Riad/AddRiad';
+import AddUser from '../Admin/Users/AddUser'; // Import the AddUser component
 import { OpenContext } from '../../contexts/OpenContext'; // Verify this path
 
 export default function ModalAdd() {
@@ -17,6 +18,7 @@ export default function ModalAdd() {
 
   const isRoomPage = pathname.includes('Rooms');
   const isRiadPage = pathname.includes('Riads');
+  const isUserPage = pathname.includes('Users'); // Check if the current page is a user page
 
   return (
     <Transition
@@ -41,7 +43,7 @@ export default function ModalAdd() {
                     <div className="px-4 sm:px-6">
                       <div className="flex items-start justify-between">
                         <DialogTitle className="text-base font-semibold leading-6 text-gray-900">
-                          {isRoomPage ? 'Add New Room' : isRiadPage ? 'Add New Riad' : 'Add New Item'}
+                          {isRoomPage ? 'Add New Room' : isRiadPage ? 'Add New Riad' : isUserPage ? 'Add New User' : 'Add New Item'}
                         </DialogTitle>
                         <div className="ml-3 flex h-7 items-center">
                           <button
@@ -57,7 +59,7 @@ export default function ModalAdd() {
                       </div>
                     </div>
                     <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                      {isRoomPage ? <AddRoom /> : isRiadPage ? <AddRiad /> : <div>Select a page</div>}
+                      {isRoomPage ? <AddRoom /> : isRiadPage ? <AddRiad /> : isUserPage ? <AddUser /> : <div>Select a page</div>}
                     </div>
                   </div>
                 </DialogPanel>

@@ -5,9 +5,11 @@ import { OpenContext } from '../../../contexts/OpenContext';
 import { useFlashMessage } from '../../../contexts/FlashMessageContext';
 import ModalAdd from '../../Modal/ModalAdd';
 import ModalEdit from '../../Modal/ModalEdit';
-import { CloudArrowUpIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import Navbar from '../../Navbar/navbar'; 
 import axios from 'axios';
+import '../../../assets/style/loading.css';
+
+// Fetch function
 const fetchUsers = async () => {
   const token = localStorage.getItem('token_admin');
   
@@ -53,37 +55,40 @@ const UserTable = () => {
     user.username.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return (
+    <div className="spinner-container">
+      <div className="spinner"></div>
+      <div className="loading-text">Loading...</div>
+    </div>
+  );
   if (error) return <div>Error loading data: {error.message}</div>;
 
   return (
     <div>
       <Navbar /> {/* Add Navbar here */}
       <div className="px-4 sm:px-6 lg:px-8">
-        <input 
-          className='ml-44 p-3 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 ease-in-out' 
-          type='text' 
-          placeholder='Start your search...'
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-
-        <div className="sm:flex sm:items-center">
-          <div className="sm:flex-auto">
-            <h1 className="text-base font-semibold leading-6 text-gray-900">Users</h1>
-            <p className="mt-2 text-sm text-gray-700">A table of users.</p>
-          </div>
-          <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-            <button
-              type="button"
-              onClick={() => openModal('modalAdd')}
-              className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Add User
-            </button>
-            <ModalAdd />
-          </div>
+      <div className="flex items-center justify-between p-4 bg-white border-b border-gray-200 rounded-lg">
+        <div className="text-lg font-semibold text-gray-900">
+          Users
         </div>
+        <div className="flex items-center space-x-4">
+          <input 
+            className='p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 transition duration-150 ease-in-out'
+            type='text'
+            placeholder='Search...'
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <button
+            type="button"
+            onClick={() => openModal('modalAdd')}
+            className="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
+          >
+            Add
+          </button>
+          <ModalAdd />
+        </div>
+      </div>
 
         <div className="mt-8 flow-root">
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
