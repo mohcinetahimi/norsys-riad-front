@@ -28,7 +28,7 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
 }
 
-export default function RoomList() {
+export default function RoomList({ onBookNow }) {
     const [selectedRoom, setSelectedRoom] = useState(rooms[0]);
 
     return (
@@ -80,6 +80,7 @@ export default function RoomList() {
                 <button
                     type="button"
                     className="mt-6 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    onClick={() => onBookNow(selectedRoom)}
                 >
                     Book Now
                 </button>
