@@ -25,7 +25,7 @@ const addRoom = async ({ formData }) => {
   return response.data;
 };
 
-const AddRoom = ({ riadId }) => {
+const AddRoomForm = ({ riadId }) => {
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
@@ -159,4 +159,4 @@ const AddRoom = ({ riadId }) => {
   );
 };
 
-export default AddRoom;
+export default AddRoomForm;

@@ -18,7 +18,7 @@ import EditUser from './components/Admin/Users/EditUser';
 import ProtectedRoute from './components/Admin/token/ProtectedRoute';
 import { OpenProvider } from './contexts/OpenContext';
 import { FlashMessageProvider } from './contexts/FlashMessageContext'; // Import FlashMessageProvider
-import AddRoom from './components/Admin/Room/AddRoom';
+import AddRoomForm from './components/Admin/Room/AddRoomForm';
 import Table from './components/Admin/Room/Roomtable';
 import Unauthorized from './components/Admin/token/Unauthorized';
 import Table2 from './components/Admin/Riad/Riadtable';
@@ -63,7 +63,7 @@ function App() {
               <Route path='/admin/riads' element={<ProtectedRoute element={Table2} requiredRole="ROLE_ADMIN" />} />
               <Route path='/profile' element={<ProtectedRoute element={ProfilePage} requiredRole="ROLE_ADMIN" />} />
               
-              <Route path="/addRoom" element={<ProtectedRoute element={AddRoom} requiredRole="ROLE_ADMIN" />} />
+              <Route path="/addRoom" element={<ProtectedRoute element={AddRoomForm} requiredRole="ROLE_ADMIN" />} />
               <Route path="/addRiad" element={<ProtectedRoute element={AddRiad} requiredRole="ROLE_ADMIN" />} />
               <Route path="/listRooms" element={<ProtectedRoute element={Table} requiredRole="ROLE_ADMIN" />} />
               <Route path="/listRiads" element={<ProtectedRoute element={Table2} requiredRole="ROLE_ADMIN" />} />

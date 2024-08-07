@@ -1,7 +1,7 @@
 import { Fragment, useContext } from 'react';
 import { Dialog, DialogPanel, DialogTitle, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import AddRoom from '../Admin/Room/AddRoom';
+import AddRoomForm from '../Admin/Room/AddRoomForm';
 import AddRiad from '../Admin/Riad/AddRiad';
 import AddUser from '../Admin/Users/AddUser'; // Import the AddUser component
 import { OpenContext } from '../../contexts/OpenContext'; // Verify this path

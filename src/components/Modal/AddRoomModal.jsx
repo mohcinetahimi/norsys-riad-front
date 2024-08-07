@@ -1,6 +1,6 @@
 import React from 'react';
 import { useOpen } from '../../contexts/OpenContext'; // Ensure this path is correct
-import AddRoom from '../Admin/Room/AddRoom'; // Import your AddRoom component
+import AddRoomForm from '../Admin/Room/AddRoomForm'; // Import your AddRoom component
 
 const AddRoomModal = ({ riadId }) => {
   const { modals, openModal, closeModal } = useOpen();
@@ -18,7 +18,7 @@ const AddRoomModal = ({ riadId }) => {
               &times;
             </button>
             <h2 className="text-lg font-semibold mb-4">Add New Room to Riad {riadId}</h2>
-            <AddRoom riadId={riadId} />
+            <AddRoomForm riadId={riadId} />
           </div>
         </div>
       )}
