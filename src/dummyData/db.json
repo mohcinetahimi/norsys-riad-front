@@ -1,0 +1,118 @@
+{
+  "Riads": [
+    {
+      "id": "1",
+      "name": "Riad Al Ksar",
+      "description": "A luxurious riad with a rooftop terrace offering stunning views of the medina. Features traditional Moroccan decor and a tranquil courtyard garden.",
+      "address": "Derb el Farah, Marrakech",
+      "city": "Marrakech"
+    },
+    {
+      "id": "2",
+      "name": "Riad Fes Maya",
+      "description": "An elegant riad in the heart of Fes, boasting intricate tile work and a serene atmosphere. Guests can enjoy a spa, hammam, and exquisite Moroccan cuisine.",
+      "address": "Rue Sidi Mohamed Ben Amar, Fes",
+      "city": "Fes"
+    },
+    {
+      "id": "3",
+      "name": "Riad Dar Anika",
+      "description": "A charming riad located near the Bahia Palace. Offers a beautiful courtyard with a pool and a rooftop terrace where guests can relax and dine.",
+      "address": "Riad Zitoun Kedim, Marrakech",
+      "city": "Marrakech"
+    },
+    {
+      "id": "4",
+      "name": "Riad Zitoune",
+      "description": "A cozy riad in the old medina of Chefchaouen. Features traditional blue decor and a peaceful atmosphere, perfect for a relaxing getaway.",
+      "address": "Avenue Hassan II, Chefchaouen",
+      "city": "Chefchaouen"
+    },
+    {
+      "id": "5",
+      "name": "Riad La Maison Rouge",
+      "description": "A stylish riad with modern amenities and a rooftop pool. Located in the vibrant city of Marrakech, close to major attractions and souks.",
+      "address": "Rue Sidi Mimoun, Marrakech",
+      "city": "Marrakech"
+    },
+    {
+      "id": "8bd1",
+      "name": "Ayadina",
+      "description": "A luxurious riad with a rooftop terrace offering stunning views of the medina. Features traditional Moroccan decor and a tranquil courtyard garden.\t",
+      "address": "old medina ",
+      "city": "Marrakech"
+    },
+    {
+      "id": "9b0d",
+      "name": "delete",
+      "description": "it worked",
+      "address": "now lets see what is next",
+      "city": "thank you"
+    },
+    {
+      "id": "1403",
+      "name": "new Riad",
+      "description": "this  is Our new Riad",
+      "address": "fff",
+      "city": "marrakech"
+    }
+  ],
+  "Rooms": [
+    {
+      "id_riad": 7,
+      "description": " a Compact Spacious Room with Triple bed ",
+      "nb_personne": 2,
+      "price": 150,
+      "name": "Suite Deluxe",
+      "id": "1"
+    },
+    {
+      "id": "2",
+      "name": "Standard Room",
+      "description": "A cozy room with a double bed and essential amenities.",
+      "nb_personne": 2,
+      "price": 80,
+      "id_riad": 1
+    },
+    {
+      "id": "3",
+      "name": "Family Room",
+      "description": "A spacious room with a queen-sized bed and bunk beds, perfect for families.",
+      "nb_personne": 4,
+      "price": 200,
+      "id_riad": 2
+    },
+    {
+      "id": "4",
+      "name": "Single Room",
+      "description": "A compact room with a single bed, ideal for solo travelers.",
+      "nb_personne": 1,
+      "price": 50,
+      "id_riad": 3
+    },
+    {
+      "id": "5",
+      "name": "Junior Suite",
+      "description": "A junior suite with a queen-sized bed, a seating area, and a city view.",
+      "nb_personne": 2,
+      "price": 120,
+      "id_riad": 2
+    },
+    {
+      "id": "df5a",
+      "id_riad": "74",
+      "price": 199,
+      "nb_personne": 1,
+      "description": "A spacious room based on the startrek movie",
+      "name": "Space Ship"
+    },
+    {
+      "id": "67b8",
+      "id_riad": "47",
+      "price": 44,
+      "nb_personne": 555,
+      "description": "sdf\n",
+      "name": "mohcin tahimi"
+    }
+  ]
+}
