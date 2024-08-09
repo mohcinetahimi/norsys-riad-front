@@ -6,7 +6,7 @@ import 'react-date-range/dist/theme/default.css'; // theme css file
 import { addDays } from 'date-fns';
 import SuccessDialog from './SuccessDialog'; // Adjust the path as necessary
 
-function ReservationForm() {
+function ReservationForm({ selectedRoomId }) {
     const [formData, setFormData] = useState({
         firstname: '',
         lastname: '',
@@ -14,8 +14,10 @@ function ReservationForm() {
         tel: '',
         total_price: '',
         discount: '',
-        room: '/api/rooms/2', // Adjust as necessary
+        room: selectedRoomId ? `/api/rooms/${selectedRoomId}` : '', // Format room field as URL
         user: '/api/users/2', // Adjust as necessary
+        start_date: '',
+        end_date: '',
     });
 
     const [dateRange, setDateRange] = useState([
@@ -32,11 +34,11 @@ function ReservationForm() {
     const handleDateChange = (ranges) => {
         const { selection } = ranges;
         setDateRange([selection]);
-        setFormData({
-            ...formData,
+        setFormData(prevData => ({
+            ...prevData,
             start_date: selection.startDate.toISOString(),
-            end_date: selection.endDate.toISOString()
-        });
+            end_date: selection.endDate.toISOString(),
+        }));
     };
 
     const handleChange = (e) => {
@@ -47,21 +49,41 @@ function ReservationForm() {
         }));
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
+    const handleSubmit = async (event) => {
+        event.preventDefault();
         try {
-            const response = await axios.post('http://localhost:8000/api/reservations', formData, {
+            const requestData = {
+                firstname: formData.firstname,
+                lastname: formData.lastname,
+                email: formData.email,
+                tel: formData.tel,
+                start_date: formData.start_date,
+                end_date: formData.end_date,
+                total_price: formData.total_price,
+                discount: formData.discount,
+                room: formData.room,
+                user: formData.user,
+                totalPrice: parseFloat(formData.total_price), // Assuming totalPrice is a number
+            };
+
+            console.log("Sending request data:", requestData);
+
+            const response = await fetch('http://localhost:8000/api/reservations', {
+                method: 'POST',
                 headers: {
-                    'Content-Type': 'application/ld+json',
+                    'Content-Type': 'application/json',
                 },
+                body: JSON.stringify(requestData),
             });
 
-            setDialogMessage('Reservation successful');
+            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(result.message || 'Error creating reservation');
+            }
+            setDialogMessage('Reservation created successfully!');
             setIsDialogOpen(true);
         } catch (error) {
-            console.error('Error creating reservation:', error.response ? error.response.data : error.message);
-            setDialogMessage('An error occurred while creating the reservation.');
+            setDialogMessage(`Error creating reservation: ${error.message}`);
             setIsDialogOpen(true);
         }
     };
