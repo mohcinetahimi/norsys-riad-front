@@ -3,22 +3,21 @@ import { Disclosure, Transition, Menu } from '@headlessui/react';
 import { BellIcon, XMarkIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
-// Import the local image
-import userImage from '../../../assets/Admin.jpg'; // Adjust the path as needed
-// Sample navigation items
+import userImage from '../../../assets/Admin.jpg'; 
+
+import apiClient from '../token/config'; 
+
 const navigation = [
     { name: 'Home', href: '/ListUsers' },
     { name: 'Riads', href: '/listRiads' },
     { name: 'Rooms', href: '/ListRooms' }
 ];
 
-// User navigation items
 const userNavigation = [
     { name: 'Profile', href: '/profile' },
     { name: 'Settings', href: '#' },
-    { name: 'Sign out', href: '#' },
+    { name: 'Sign out', href: '' },
 ];
 
 function Navbar() {
@@ -28,23 +27,14 @@ function Navbar() {
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                const token = localStorage.getItem('token_admin');
-
-                if (token) {
-                    const response = await axios.get('http://localhost:8000/api/user_info', {
-                        params: { token },
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                        },
-                    });
-
-                    setUser({
-                        name: response.data.username || 'Unknown',
-                        email: response.data.email, 
-                        firstName: response.data.firstname,
-                        imageUrl: userImage // Use the imported image
-                    });
-                }
+                const response = await apiClient.get('/user_info');
+                setUser({
+                    name: response.data.username || 'Unknown',
+                    email: response.data.email, 
+                    firstName: response.data.firstname,
+                    imageUrl: userImage 
+                });
+                
             } catch (error) {
                 console.error('Failed to fetch user info:', error);
             }
@@ -55,21 +45,12 @@ function Navbar() {
 
     const handleLogout = async () => {
         try {
-            const token = localStorage.getItem('token_admin');
-
-            await axios.post('http://localhost:8000/api/logout', {}, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
+            await apiClient.post('/logout');
             localStorage.removeItem('token_admin');
             navigate('/Admin'); 
 
         } catch (error) {
             console.error('Logout failed:', error);
-            // Optionally, show an error message to the user
         }
     };
 
@@ -213,8 +194,8 @@ function Navbar() {
                                         href={item.name === 'Sign out' ? '#' : item.href}
                                         onClick={item.name === 'Sign out' ? handleLogout : undefined}
                                         className={classNames(
-                                            'block rounded-md px-3 py-2 text-base font-medium',
-                                            item.name === 'Sign out' ? 'text-red-500' : 'text-white hover:bg-indigo-500 hover:bg-opacity-75'
+                                            'text-white hover:bg-indigo-500 hover:bg-opacity-75',
+                                            'block rounded-md px-3 py-2 text-base font-medium'
                                         )}
                                     >
                                         {item.name}
