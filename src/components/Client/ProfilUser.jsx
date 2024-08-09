@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import apiClient from '../Admin/token/configUser'; // Adjust import path as needed
 import userImage from '../../assets/Admin.jpg'; // Path to default image
 import Navbar from '../../components/Riad/Navbar';
 import { PhotoIcon, TrashIcon } from '@heroicons/react/24/outline'; // Import TrashIcon
 import { useNavigate } from 'react-router-dom';
+import { useFlashMessage } from '../../contexts/FlashMessageContext'; // Adjust import path as needed
+import '../../assets/style/loading.css';    
+import axios from 'axios';
 
 function ProfilePage() {
     const [user, setUser] = useState({
@@ -21,43 +24,39 @@ function ProfilePage() {
     const [menuVisible, setMenuVisible] = useState(false);
     const fileInputRef = useRef(null);
     const navigate = useNavigate(); // Hook for programmatic navigation
-
-    const fetchUserInfo = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            if (token) {
-                const response = await axios.get('http://localhost:8000/api/user_info', {
-                    params: { token },
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    },
-                });
-
-                setUser({
-                    id: response.data.id, // Set the user ID
-                    name: `${response.data.firstname || 'Unknown'} ${response.data.lastname || ''}`,
-                    email: response.data.email || 'example@example.com',
-                    firstName: response.data.firstname || 'No first name',
-                    lastName: response.data.lastname || 'No last name',
-                    Cin: response.data.Cin || 'No CIN',
-                    address: response.data.adresse || 'No address',
-                    telephone: response.data.Telephone || 'No telephone',
-                    imageUrl: response.data.image_url ? response.data.image_url : '' // Use image URL from response if available, otherwise empty
-                });
-            } else {
-                // Redirect to login if no token found
-                navigate('/login');
-            }
-        } catch (error) {
-            console.error('Failed to fetch user info:', error);
-            // Redirect to login on error
-            navigate('/login');
-        } finally {
-            setLoading(false);
-        }
-    };
+    const flashMessage = useFlashMessage(); // Hook for flash messages
 
     useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (token) {
+                    const response = await axios.get('http://localhost:8000/api/user_info', {
+                        params: { token },
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                        },
+                    });
+                    console.log(response.data);
+                    setUser({
+                        id: response.data.id,
+                        name: `${response.data.firstname || 'Unknown'} ${response.data.lastname || ''}`,
+                        email: response.data.email || 'example@example.com',
+                        firstName: response.data.firstname || 'No first name',
+                        lastName: response.data.lastname || 'No last name',
+                        Cin: response.data.Cin || 'No CIN',
+                        address: response.data.adresse || 'No address',
+                        telephone: response.data.Telephone || 'No telephone',
+                        imageUrl: response.data.image_url || userImage, // Use image URL from response if available
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to fetch user info:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         fetchUserInfo();
     }, []);
 
@@ -75,16 +74,16 @@ function ProfilePage() {
         formData.append('image', file);
 
         try {
-            const response = await axios.post('http://localhost:8000/api/upload-image', formData, {
+            const response = await apiClient.post('/upload-image', formData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
+                    'Content-Type': 'multipart/form-data'
+                }
             });
 
             if (response.data.fileUrl) {
-                fetchUserInfo(); // Fetch the latest user info after upload to update image URL
+                
                 setMenuVisible(false); // Hide the menu after upload
+                window.location.reload();
             } else {
                 console.error('Response does not contain fileUrl:', response.data);
             }
@@ -95,15 +94,12 @@ function ProfilePage() {
 
     const handleImageDelete = async () => {
         try {
-            const response = await axios.delete(`http://localhost:8000/api/delete-image/${user.id}`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
+            const response = await apiClient.delete(`/delete-image/${user.id}`);
 
             if (response.status === 204) {
-                fetchUserInfo(); // Fetch the latest user info after delete to update image URL
+                
                 setMenuVisible(false); // Hide the menu after delete
+                window.location.reload();
             } else {
                 console.error('Failed to delete image:', response.data);
             }
@@ -116,7 +112,12 @@ function ProfilePage() {
         setMenuVisible(!menuVisible);
     };
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return (
+        <div className="spinner-container">
+            <div className="spinner"></div>
+            <div className="loading-text">Loading...</div>
+        </div>
+    );
 
     return (
         <>

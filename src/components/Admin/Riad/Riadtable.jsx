@@ -168,6 +168,7 @@ const Table = () => {
                           <CloudArrowUpIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                         </td>
                       </tr>
+                      {/* Modal components outside of the <tbody> */}
                       {modals[`modalManageRooms_${riad.id}`] && (
                         <AddRoomModal riadId={riad.id} />
                       )}
@@ -177,6 +178,7 @@ const Table = () => {
                     </React.Fragment>
                   ))}
                 </tbody>
+
               </table>
             )}
           </div>

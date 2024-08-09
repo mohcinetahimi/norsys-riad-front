@@ -1,4 +1,3 @@
-// src/components/Modal/RoomsModal.jsx
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axiosInstance from '../Admin/token/config';
@@ -35,25 +34,14 @@ const RoomsModal = ({ riadId, onClose }) => {
             {rooms.length === 0 ? (
               <div className="text-center text-gray-500">No rooms available.</div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-300">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Room ID</th>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Name</th>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Description</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {rooms.map((room) => (
-                      <tr key={room.id}>
-                        <td className="px-6 py-4 text-sm text-gray-500">{room.id}</td>
-                        <td className="px-6 py-4 text-sm font-medium text-gray-900">{room.name}</td>
-                        <td className="px-6 py-4 text-sm text-gray-500">{room.description}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="space-y-4">
+                {rooms.map((room) => (
+                  <div key={room.id} className="p-4 border rounded-lg shadow-sm bg-gray-50">
+                    <h4 className="text-xl font-semibold text-gray-800">Room ID: {room.id}</h4>
+                    <p className="text-lg font-medium text-gray-700">Name: {room.name}</p>
+                    <p className="text-gray-600">Description: {room.description}</p>
+                  </div>
+                ))}
               </div>
             )}
           </div>

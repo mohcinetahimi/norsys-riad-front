@@ -1,30 +1,23 @@
 import React, { useState, useContext } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import apiClient from '../token/config'; // Update import to use apiClient
 import { Button } from '@headlessui/react';
 import AddRiad from '../Riad/AddRiad';
 import { OpenContext } from '../../../contexts/OpenContext';
 import ModalAdd from '../../Modal/ModalAdd';
 import ModalEdit from '../../Modal/ModalEdit';
-import UploadImage from '../../Test';
 import ModalImages from '../../Modal/ModalImages';
-import { CloudArrowUpIcon } from '@heroicons/react/24/solid'; 
+import { CloudArrowUpIcon } from '@heroicons/react/24/solid';
 import Navbar from '../Navbar/navbar';
 import '../../../assets/style/loading.css';
 
+// Fetch Rooms with apiClient
 const fetchRooms = async () => {
-  const token = localStorage.getItem('token_admin');
   try {
-    const { data } = await axios.get('http://localhost:8000/api/rooms', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
+    const { data } = await apiClient.get('/rooms');
     if (!Array.isArray(data['hydra:member'])) {
       throw new Error('Invalid data format');
     }
-
     return data['hydra:member'];
   } catch (error) {
     console.error('Error fetching rooms:', error);
@@ -48,12 +41,7 @@ export default function Table() {
 
   const deleteRoom = async (id) => {
     try {
-      const token = localStorage.getItem('token_admin');
-      await axios.delete(`http://localhost:8000/api/rooms/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await apiClient.delete(`/rooms/${id}`);
       queryClient.invalidateQueries('rooms'); // Refetch rooms after deletion
     } catch (error) {
       console.error("There was an error deleting the room:", error);
@@ -97,7 +85,6 @@ export default function Table() {
 
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
-           
             <p className="mt-2 text-sm text-gray-700">A table of Rooms.</p>
           </div>
         </div>
