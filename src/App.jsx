@@ -54,7 +54,7 @@ function App() {
               <Route path='/riad/:id' element={<RiadDetail />} />
               <Route path="/password-reset" element={<PasswordReset />} />
               <Route path="/Search" element={<SearchComponent />} />
-              <Route path='/admin' element={<AdminLogin />} />
+              <Route path='/admin/login' element={<AdminLogin />} />
               <Route path="/cal" element={<CalendarRes />} />
               <Route path='/test' element={<Test />} />
               <Route path='/test2' element={<Test2 />} />
@@ -62,13 +62,13 @@ function App() {
 
               {/* Protected Routes */}
               <Route path='/admin/riads' element={<ProtectedRoute element={Table2} requiredRole="ROLE_ADMIN" />} />
-              <Route path='/profile' element={<ProtectedRoute element={ProfilePage} requiredRole="ROLE_ADMIN" />} />
+              <Route path='/admin/profile' element={<ProtectedRoute element={ProfilePage} requiredRole="ROLE_ADMIN" />} />
               
               <Route path="/addRoom" element={<ProtectedRoute element={AddRoomForm} requiredRole="ROLE_ADMIN" />} />
               <Route path="/addRiad" element={<ProtectedRoute element={AddRiad} requiredRole="ROLE_ADMIN" />} />
-              <Route path="/listRooms" element={<ProtectedRoute element={Table} requiredRole="ROLE_ADMIN" />} />
-              <Route path="/listRiads" element={<ProtectedRoute element={Table2} requiredRole="ROLE_ADMIN" />} />
-              <Route path="/listUsers" element={<ProtectedRoute element={ListUsers} requiredRole="ROLE_ADMIN" />} />
+              <Route path="/admin/listrooms" element={<ProtectedRoute element={Table} requiredRole="ROLE_ADMIN" />} />
+              <Route path="/admin/listriads" element={<ProtectedRoute element={Table2} requiredRole="ROLE_ADMIN" />} />
+              <Route path="/admin/listusers" element={<ProtectedRoute element={ListUsers} requiredRole="ROLE_ADMIN" />} />
               <Route path="/users/:userId" element={<ProtectedRoute element={UserDetail} requiredRole="ROLE_ADMIN" />} />
               <Route path="/edit-user/:userId" element={<ProtectedRoute element={EditUser} requiredRole="ROLE_ADMIN" />} />
               

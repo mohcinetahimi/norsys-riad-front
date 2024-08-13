@@ -3,11 +3,11 @@ import { useOpen } from '../../contexts/OpenContext'; // Ensure this path is cor
 import AddRoomForm from '../Admin/Room/AddRoomForm'; // Import your AddRoom component
 
 const AddRoomModal = ({ riadId }) => {
+  console.log("add room",riadId)
   const { modals, openModal, closeModal } = useOpen();
 
   return (
     <div>
-      {/* Modal */}
       {modals[`modalManageRooms_${riadId}`] && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
           <div className="bg-white rounded-md shadow-lg max-w-lg w-full p-6 relative">

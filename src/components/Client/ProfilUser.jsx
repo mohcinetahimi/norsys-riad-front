@@ -23,12 +23,35 @@ function ProfilePage() {
     const [loading, setLoading] = useState(true);
     const [menuVisible, setMenuVisible] = useState(false);
     const fileInputRef = useRef(null);
-    const navigate = useNavigate(); // Hook for programmatic navigation
-    const flashMessage = useFlashMessage(); // Hook for flash messages
+    const navigate = useNavigate();
+    const { setFlashMessage } = useFlashMessage(); // Assuming you have a flash message context provider
+
+    // Validate token
+    const validateToken = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (token) {
+                const response = await axios.post('http://localhost:8000/api/validate-token', {}, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                if (response.status === 200 && !response.data.valid) {
+                    throw new Error('Token is not valid');
+                }
+            }
+        } catch (error) {
+            setFlashMessage('Session ended, please log in again.');
+            navigate('/login');
+        }
+    };
 
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
+                await validateToken(); // Validate token before fetching user info
+
                 const token = localStorage.getItem('token');
                 if (token) {
                     const response = await axios.get('http://localhost:8000/api/user_info', {
@@ -47,11 +70,13 @@ function ProfilePage() {
                         Cin: response.data.Cin || 'No CIN',
                         address: response.data.adresse || 'No address',
                         telephone: response.data.Telephone || 'No telephone',
-                        imageUrl: response.data.image_url || userImage, // Use image URL from response if available
+                        imageUrl: response.data.image_url  || '', // Use image URL from response if available
                     });
                 }
             } catch (error) {
                 console.error('Failed to fetch user info:', error);
+                setFlashMessage('Session ended, please log in again.');
+                navigate('/login');
             } finally {
                 setLoading(false);
             }
@@ -81,7 +106,6 @@ function ProfilePage() {
             });
 
             if (response.data.fileUrl) {
-                
                 setMenuVisible(false); // Hide the menu after upload
                 window.location.reload();
             } else {
@@ -97,7 +121,6 @@ function ProfilePage() {
             const response = await apiClient.delete(`/delete-image/${user.id}`);
 
             if (response.status === 204) {
-                
                 setMenuVisible(false); // Hide the menu after delete
                 window.location.reload();
             } else {

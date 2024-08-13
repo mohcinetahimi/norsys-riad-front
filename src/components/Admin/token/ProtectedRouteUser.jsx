@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import apiClient from '../token/configUser';
@@ -19,11 +18,7 @@ const ProtectedRoute = ({ element: Component, requiredRole, ...rest }) => {
         if (response.status === 200 && response.data.valid) {
           setIsValid(true);
           setRole(response.data.role || ''); 
-        } else {
-          showFlashMessage('Unauthorized access.');
-          setIsValid(false);
-          navigate('/login');
-        }
+        } 
       } catch (error) {
         if (error.response && error.response.status === 401) {
           if (error.response.data.message === 'Expired JWT Token') {
@@ -32,7 +27,6 @@ const ProtectedRoute = ({ element: Component, requiredRole, ...rest }) => {
             showFlashMessage('Unauthorized access.');
           }
           setIsValid(false);
-          
         } else {
           console.error('Token validation failed:', error);
           showFlashMessage('An error occurred while validating the token.');
@@ -49,9 +43,9 @@ const ProtectedRoute = ({ element: Component, requiredRole, ...rest }) => {
   if (isValid === null) {
     return (
       <div className="spinner-container">
-      <div className="spinner"></div>
-      <div className="loading-text">Loading...</div>
-    </div>
+        <div className="spinner"></div>
+        <div className="loading-text">Loading...</div>
+      </div>
     );
   }
 
@@ -59,7 +53,7 @@ const ProtectedRoute = ({ element: Component, requiredRole, ...rest }) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (requiredRole && role !== requiredRole) {
+  if (requiredRole && role !== requiredRole && role !== 'ROLE_ADMIN') {
     showFlashMessage('You do not have permission to access this page.');
     return <Navigate to="/unauthorized" replace />;
   }

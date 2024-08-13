@@ -154,41 +154,10 @@ const EditUser = ({ userId, onClose }) => {
               </div>
 
               {/* Roles */}
-              <div className="sm:col-span-6">
-                <label htmlFor="roles" className="block text-sm font-medium leading-6 text-gray-900">
-                  Roles
-                </label>
-                <div className="mt-2">
-                  <select
-                    name="roles"
-                    id="roles"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    {...register("roles")}
-                    multiple
-                  >
-                    <option value="ROLE_USER">User</option>
-                    <option value="ROLE_ADMIN">Admin</option>
-                  </select>
-                  {errors.roles && <p className="mt-2 text-sm text-red-600">{errors.roles.message}</p>}
-                </div>
-              </div>
+              
 
               {/* Password */}
-              <div className="sm:col-span-6">
-                <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
-                  Password
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    {...register("password")}
-                  />
-                  {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>}
-                </div>
-              </div>
+             
 
               {/* First Name */}
               <div className="sm:col-span-6">

@@ -8,11 +8,21 @@ export const OpenProvider = ({ children }) => {
   const [modals, setModals] = useState({});
 
   const openModal = (modalName) => {
-    setModals(prev => ({ ...prev, [modalName]: true }));
+    console.log(`Opening modal: ${modalName}`); // Log when opening a modal
+    setModals(prev => {
+      const updatedModals = { ...prev, [modalName]: true };
+      console.log('Current modals state after opening:', updatedModals); // Log the updated state
+      return updatedModals;
+    });
   };
 
   const closeModal = (modalName) => {
-    setModals(prev => ({ ...prev, [modalName]: false }));
+    console.log(`Closing modal: ${modalName}`); // Log when closing a modal
+    setModals(prev => {
+      const updatedModals = { ...prev, [modalName]: false };
+      console.log('Current modals state after closing:', updatedModals); // Log the updated state
+      return updatedModals;
+    });
   };
 
   return (

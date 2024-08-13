@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+// src/components/ReservationForm.jsx
+import React, { useState, useEffect } from 'react';
+import axios from '../Admin/token/configUser'; // Import Axios instance
 import { DateRangePicker } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
@@ -15,7 +16,7 @@ function ReservationForm({ selectedRoomId }) {
         total_price: '',
         discount: '',
         room: selectedRoomId ? `/api/rooms/${selectedRoomId}` : '', // Format room field as URL
-        user: '/api/users/2', // Adjust as necessary
+        user: '', // Set user ID dynamically
         start_date: '',
         end_date: '',
     });
@@ -30,6 +31,28 @@ function ReservationForm({ selectedRoomId }) {
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [dialogMessage, setDialogMessage] = useState('');
+
+    // Fetch user ID when the component mounts
+    useEffect(() => {
+        const fetchUserId = async () => {
+            try {
+                const response = await axios.get('/user-id');
+                const data = response.data;
+                if (data.user_id) {
+                    setFormData(prevData => ({
+                        ...prevData,
+                        user: `/api/users/${data.user_id}`,
+                    }));
+                } else {
+                    console.error('Failed to fetch user ID:', data.error);
+                }
+            } catch (error) {
+                console.error('Error fetching user ID:', error);
+            }
+        };
+
+        fetchUserId();
+    }, []);
 
     const handleDateChange = (ranges) => {
         const { selection } = ranges;
@@ -68,22 +91,12 @@ function ReservationForm({ selectedRoomId }) {
 
             console.log("Sending request data:", requestData);
 
-            const response = await fetch('http://localhost:8000/api/reservations', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestData),
-            });
+            const response = await axios.post('/reservations', requestData);
 
-            const result = await response.json();
-            if (!response.ok) {
-                throw new Error(result.message || 'Error creating reservation');
-            }
             setDialogMessage('Reservation created successfully!');
             setIsDialogOpen(true);
         } catch (error) {
-            setDialogMessage(`Error creating reservation: ${error.message}`);
+            setDialogMessage(`Error creating reservation: ${error.response?.data?.message || error.message}`);
             setIsDialogOpen(true);
         }
     };

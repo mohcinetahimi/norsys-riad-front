@@ -16,7 +16,7 @@ const ProtectedRoute = ({ element: Component, requiredRole, ...rest }) => {
       const token = localStorage.getItem('token_admin');
 
       if (!token) {
-        navigate('/admin');
+        navigate('/admin/login');
         return;
       }
 
@@ -27,24 +27,24 @@ const ProtectedRoute = ({ element: Component, requiredRole, ...rest }) => {
           setIsValid(true);
           setRole(response.data.role || ''); 
         } else {
-          showFlashMessage('Unauthorized access.');
+          showFlashMessage('Your session has expired. Please log in again.');
           setIsValid(false);
-          navigate('/admin');
+          navigate('/admin/login');
         }
       } catch (error) {
         if (error.response && error.response.status === 401) {
           if (error.response.data.message === 'Expired JWT Token') {
             showFlashMessage('Your session has expired. Please log in again.');
           } else {
-            showFlashMessage('Unauthorized access.');
+            showFlashMessage('Your session has expired. Please log in again.');
           }
           setIsValid(false);
-          navigate('/admin');
+          navigate('/admin/login');
         } else {
           console.error('Token validation failed:', error);
-          showFlashMessage('An error occurred while validating the token.');
+          showFlashMessage('Your session has expired. Please log in again.');
           setIsValid(false);
-          navigate('/admin');
+          navigate('/admin/login');
         }
         localStorage.removeItem('token_admin');
       }
@@ -63,7 +63,7 @@ const ProtectedRoute = ({ element: Component, requiredRole, ...rest }) => {
   }
 
   if (!isValid) {
-    return <Navigate to="/admin" replace />;
+    return <Navigate to="/admin/login" replace />;
   }
 
   if (requiredRole && role !== requiredRole) {

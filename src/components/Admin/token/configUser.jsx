@@ -1,5 +1,6 @@
-// src/api/apiConfig.js
 import axios from 'axios';
+import { useContext } from 'react';
+import { FlashMessageContext } from '../../../contexts/FlashMessageContext';
 
 // Create an Axios instance
 const apiClient = axios.create({
@@ -12,10 +13,6 @@ const apiClient = axios.create({
 // Add a request interceptor to include the token in headers
 apiClient.interceptors.request.use(config => {
     const token = localStorage.getItem('token');
-    // if (!token) {
-    //     window.location.href = '/'; 
-    //     return;
-    // }
     if (token) {
         config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -28,11 +25,23 @@ apiClient.interceptors.request.use(config => {
 apiClient.interceptors.response.use(response => {
     return response;
 }, error => {
-    if (error.response && error.response.status === 401 && error.response.data.message === 'Expired JWT Token') {
-        // Handle token expiration logic
-        localStorage.removeItem('token');
-        
-        
+    if (error.response && error.response.status === 401) {
+        // Check if the error is due to an expired token
+        if (error.response.data.message === 'Expired JWT Token') {
+            // Handle token expiration logic
+            localStorage.removeItem('token');
+            
+            // Use showFlashMessage function to display the flash message
+            // Since we're in a non-component context, we cannot use useContext here.
+            // Instead, use the global window.showFlashMessage that you exposed earlier.
+
+            if (typeof window.showFlashMessage === 'function') {
+                window.showFlashMessage('Session has expired. Please log in again.', 'error');
+            }
+
+            // Redirect to login page
+            window.location.href = '/login';
+        }
     }
     return Promise.reject(error);
 });

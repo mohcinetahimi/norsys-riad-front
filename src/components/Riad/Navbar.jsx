@@ -43,18 +43,52 @@ export default function Navbar() {
         }
     };
 
+    // const handleLogout = async () => {
+    //     try {
+    //         await apiClient.post('/logout');
+    //         localStorage.removeItem('token');
+    //         setIsAuthenticated(false);
+    //         setUserData(null);
+    //         navigate('/');
+    //     } catch (error) {
+    //         console.error('Logout failed:', error);
+    //     }
+    // };
+    
     const handleLogout = async () => {
         try {
-            await apiClient.post('/logout');
-            localStorage.removeItem('token');
-            setIsAuthenticated(false);
-            setUserData(null);
-            navigate('/');
+            // Validate the token first
+            const response = await axios.post('http://localhost:8000/api/validate-token');
+            
+            if (response.data.valid) {
+                // Token is valid, proceed with logout
+                await apiClient.post('/logout');
+                localStorage.removeItem('token');
+                setIsAuthenticated(false);
+                setUserData(null);
+                navigate('/');
+            } else {
+                // Handle invalid token (e.g., expired)
+                localStorage.removeItem('token');
+                if (typeof window.showFlashMessage === 'function') {
+                    window.showFlashMessage('Session ended. Please login again.', 'error');
+                }
+                navigate('/login');
+            }
         } catch (error) {
-            console.error('Logout failed:', error);
+            if (error.response && error.response.status === 401) {
+                // Handle 401 error (e.g., token expired)
+                localStorage.removeItem('token');
+                if (typeof window.showFlashMessage === 'function') {
+                    window.showFlashMessage('Session ended. Please login again.', 'error');
+                }
+                navigate('/login');
+            } else {
+                console.error('Logout failed:', error);
+            }
         }
     };
-
+    
     return (
         <Disclosure as="nav" className="bg-white shadow fixed w-full top-0 z-10">
             {({ open }) => (
