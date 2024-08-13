@@ -14,7 +14,7 @@ const Login = () => {
     useEffect(() => {
         const token = localStorage.getItem('token_admin');
         if (token) {
-            navigate('/admin/Riads');
+            navigate('/admin/riads');
         }
     }, [navigate]);
 
@@ -38,7 +38,7 @@ const Login = () => {
 
             if (response.data.status === 200) {
                 localStorage.setItem('token_admin', response.data.token);
-                navigate('/ListUsers');
+                navigate('/admin/listusers');
             } else {
                 setError(response.data.message || 'Login failed. Please try again.');
             }

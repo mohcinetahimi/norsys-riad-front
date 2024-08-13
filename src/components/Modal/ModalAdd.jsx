@@ -16,9 +16,9 @@ export default function ModalAdd() {
 
   const pathname = window.location.pathname;
 
-  const isRoomPage = pathname.includes('Rooms');
-  const isRiadPage = pathname.includes('Riads');
-  const isUserPage = pathname.includes('Users'); // Check if the current page is a user page
+  const isRoomPage = pathname.includes('admin/listrooms');
+  const isRiadPage = pathname.includes('admin/listriads');
+  const isUserPage = pathname.includes('admin/listUsers'); // Check if the current page is a user page
 
   return (
     <Transition

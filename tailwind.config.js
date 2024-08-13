@@ -9,5 +9,6 @@ export default {
   },
   plugins: [
     require('@tailwindcss/forms'),
+    require('daisyui'), // Add DaisyUI plugin here
   ],
 }

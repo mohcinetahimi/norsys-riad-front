@@ -9,13 +9,13 @@ import userImage from '../../../assets/Admin.jpg';
 import apiClient from '../token/config'; 
 
 const navigation = [
-    { name: 'Home', href: '/ListUsers' },
-    { name: 'Riads', href: '/listRiads' },
-    { name: 'Rooms', href: '/ListRooms' }
+    { name: 'Home', href: '/admin/listusers' },
+    { name: 'Riads', href: '/admin/listriads' },
+    { name: 'Rooms', href: '/admin/listrooms' }
 ];
 
 const userNavigation = [
-    { name: 'Profile', href: '/profile' },
+    { name: 'Profile', href: '/admin/profile' },
     { name: 'Settings', href: '#' },
     { name: 'Sign out', href: '' },
 ];
@@ -47,7 +47,7 @@ function Navbar() {
         try {
             await apiClient.post('/logout');
             localStorage.removeItem('token_admin');
-            navigate('/Admin'); 
+            navigate('/Admin/login'); 
 
         } catch (error) {
             console.error('Logout failed:', error);

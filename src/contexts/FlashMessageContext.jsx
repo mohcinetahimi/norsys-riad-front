@@ -1,9 +1,12 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
-const FlashMessageContext = createContext();
+// Create the FlashMessageContext
+export const FlashMessageContext = createContext();
 
+// Custom hook to use the FlashMessageContext
 export const useFlashMessage = () => useContext(FlashMessageContext);
 
+// Provider component
 export const FlashMessageProvider = ({ children }) => {
   const [message, setMessage] = useState(null);
   const [type, setType] = useState('success'); // Default type
@@ -34,7 +37,9 @@ export const FlashMessageProvider = ({ children }) => {
       {children}
       {message && (
         <div
-          className={`fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded shadow-md ${type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'} text-white`}
+          className={`fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded shadow-md ${
+            type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+          } text-white`}
           role="alert"
           aria-live="assertive"
         >
@@ -53,3 +58,6 @@ export const FlashMessageProvider = ({ children }) => {
     </FlashMessageContext.Provider>
   );
 };
+
+// Default export for the provider
+export default FlashMessageProvider;

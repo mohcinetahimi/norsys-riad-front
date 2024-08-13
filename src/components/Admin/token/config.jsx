@@ -15,7 +15,7 @@ apiClient.interceptors.request.use(config => {
     if (token) {
         config.headers['Authorization'] = `Bearer ${token}`;
     } else {
-        window.location.href = '/admin'; 
+        window.location.href = '/admin/login'; 
     }
     return config;
 }, error => {
@@ -29,7 +29,7 @@ apiClient.interceptors.response.use(response => {
         localStorage.removeItem('token_admin');
         // Trigger flash message
         showFlashMessage('Session ended. Please log in again.', 'error');
-        window.location.href = '/admin'; 
+        window.location.href = '/admin/login'; 
     }
     return Promise.reject(error);
 });
