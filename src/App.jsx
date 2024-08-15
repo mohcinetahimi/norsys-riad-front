@@ -18,7 +18,7 @@ import EditUser from './components/Admin/Users/EditUser';
 import ProtectedRoute from './components/Admin/token/ProtectedRoute';
 import { OpenProvider } from './contexts/OpenContext';
 import { FlashMessageProvider } from './contexts/FlashMessageContext'; // Import FlashMessageProvider
-import AddRoom from './components/Admin/Room/AddRoom';
+import AddRoom from './components/Admin/Room/Addroom';
 import Table from './components/Admin/Room/Roomtable';
 import Unauthorized from './components/Admin/token/Unauthorized';
 import Table2 from './components/Admin/Riad/Riadtable';
@@ -33,6 +33,8 @@ import Incentive from "./components/Riad/Incentive";
 import Calendar from "./components/Reservation/Calendar";
 import ReservationForm from './components/Reservation/ReservationForm';
 import CalendarRes from "./components/Admin/Reservation/CalendarRes";
+import AvailabilityChecker from './components/Reservation/AvailabilityChecker';
+import SearchAvailability from './pages/SearchAvailability';
 
 function App() {
   const queryClient = new QueryClient();
@@ -54,6 +56,9 @@ function App() {
               <Route path='/resForm' element={<ReservationForm />} />
               <Route path='/test' element={<Test />} />
               <Route path='/test2' element={<Test2 />} />
+              <Route path='/avai' element={<AvailabilityChecker />}/>
+              <Route path='/search' element={<SearchAvailability />}/>
+              
 
               {/* Protected Routes */}
               <Route path='/admin/riads' element={<ProtectedRoute element={Table2} requiredRole="ROLE_ADMIN" />} />

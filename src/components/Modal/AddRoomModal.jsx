@@ -1,6 +1,6 @@
 import React from 'react';
 import { useOpen } from '../../contexts/OpenContext'; // Ensure this path is correct
-import AddRoom from '../Admin/Room/AddRoom'; // Import your AddRoom component
+import AddRoom from '../Admin/Room/Addroom'; // Import your AddRoom component
 
 const AddRoomModal = ({ riadId }) => {
   const { modals, openModal, closeModal } = useOpen();
