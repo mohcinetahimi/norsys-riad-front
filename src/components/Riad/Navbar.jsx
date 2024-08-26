@@ -26,20 +26,28 @@ export default function Navbar() {
     const [userData, setUserData] = useState(null);
     const navigate = useNavigate();
 
+    const [userId, setUserId] = useState(null); // Define userId state
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
             setIsAuthenticated(true);
             fetchUserData(token);
+        } else {
+            setIsAuthenticated(false);
         }
     }, []);
 
     const fetchUserData = async (token) => {
         try {
-            const response = await apiClient.get('/user_info');
-            setUserData(response.data);
+            const response = await axios.get('http://localhost:8000/api/user_info', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            // Assuming response contains user data, set userId accordingly
+            setUserId(response.data.id); // Update this line according to your actual user data structure
         } catch (error) {
-            console.error('Failed to fetch user data:', error);
+            console.error('Error fetching user data:', error);
         }
     };
 

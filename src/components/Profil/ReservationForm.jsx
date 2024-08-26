@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import { DateRangePicker } from 'react-date-range';
-import 'react-date-range/dist/styles.css'; // main css file
-import 'react-date-range/dist/theme/default.css'; // theme css file
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
 import { addDays } from 'date-fns';
-import SuccessDialog from './SuccessDialog'; // Adjust the path as necessary
+import SuccessDialog from './SuccessDialog';
+import axios from 'axios';
 
 function ReservationForm({ selectedRoomId }) {
     const [formData, setFormData] = useState({
@@ -14,8 +14,8 @@ function ReservationForm({ selectedRoomId }) {
         tel: '',
         total_price: '',
         discount: '',
-        room: selectedRoomId ? `/api/rooms/${selectedRoomId}` : '', // Format room field as URL
-        user: '/api/users/2', // Adjust as necessary
+        room: selectedRoomId ? `/api/rooms/${selectedRoomId}` : '',
+        user: '',
         start_date: '',
         end_date: '',
     });
@@ -30,14 +30,60 @@ function ReservationForm({ selectedRoomId }) {
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [dialogMessage, setDialogMessage] = useState('');
+    const [userId, setUserId] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [bookingForSelf, setBookingForSelf] = useState(true); // State for booking mode
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            setIsAuthenticated(true);
+            fetchUserData(token);
+        } else {
+            setIsAuthenticated(false);
+        }
+    }, []);
+
+
+        const fetchUserData = async (token) => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/user_info', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                const userData = response.data;
+                console.log('User data:', userData); // Check this log
+                setUserId(userData.id); // Ensure this matches your API response
+
+                if (bookingForSelf) {
+                    setFormData(prevData => ({
+                        ...prevData,
+                        firstname: userData.firstname || '',
+                        lastname: userData.lastname || '',
+                        email: userData.email || '',
+                        tel: userData.telephone || '', // Update to match your API response
+                        user: `/api/users/${userData.id}`,
+                    }));
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                setIsAuthenticated(false); // Handle authentication errors
+            }
+        };
 
     const handleDateChange = (ranges) => {
         const { selection } = ranges;
         setDateRange([selection]);
+        const startDate = selection.startDate.toISOString();
+        const endDate = selection.endDate.toISOString();
+
+        console.log("Selected Dates:", { startDate, endDate }); // Debug log
+
         setFormData(prevData => ({
             ...prevData,
-            start_date: selection.startDate.toISOString(),
-            end_date: selection.endDate.toISOString(),
+            start_date: startDate,
+            end_date: endDate,
         }));
     };
 
@@ -49,116 +95,151 @@ function ReservationForm({ selectedRoomId }) {
         }));
     };
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            const requestData = {
-                firstname: formData.firstname,
-                lastname: formData.lastname,
-                email: formData.email,
-                tel: formData.tel,
-                start_date: formData.start_date,
-                end_date: formData.end_date,
-                total_price: formData.total_price,
-                discount: formData.discount,
-                room: formData.room,
-                user: formData.user,
-                totalPrice: parseFloat(formData.total_price), // Assuming totalPrice is a number
-            };
-
-            console.log("Sending request data:", requestData);
-
-            const response = await fetch('http://localhost:8000/api/reservations', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestData),
-            });
-
-            const result = await response.json();
-            if (!response.ok) {
-                throw new Error(result.message || 'Error creating reservation');
-            }
-            setDialogMessage('Reservation created successfully!');
-            setIsDialogOpen(true);
-        } catch (error) {
-            setDialogMessage(`Error creating reservation: ${error.message}`);
-            setIsDialogOpen(true);
-        }
+    const handleBookingModeChange = (e) => {
+        const isSelfBooking = e.target.checked;
+        setBookingForSelf(isSelfBooking);
+        setFormData(prevData => ({
+            ...prevData,
+            user: isSelfBooking ? `/api/users/${userId}` : '', // Clear user ID if booking for someone else
+        }));
     };
+
+    const onSubmit = async (event) => {
+            event.preventDefault();
+
+            if (!isAuthenticated && bookingForSelf) {
+                setDialogMessage('User is not authenticated. Please log in.');
+                setIsDialogOpen(true);
+                return;
+            }
+
+            if (bookingForSelf && !userId) {
+                setDialogMessage('User ID is missing.');
+                setIsDialogOpen(true);
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                if (!token && bookingForSelf) {
+                    throw new Error('No authentication token found');
+                }
+
+                const requestData = {
+                    firstname: formData.firstname,
+                    lastname: formData.lastname,
+                    email: formData.email,
+                    tel: formData.tel,
+                    start_date: formData.start_date,
+                    end_date: formData.end_date,
+                    total_price: formData.total_price,
+                    discount: formData.discount,
+                    room: formData.room,
+                    user: bookingForSelf ? `/api/users/${userId}` : '',
+                    totalPrice: parseFloat(formData.total_price),
+                };
+
+                console.log("Sending request data:", requestData); // Debug log
+
+                const response = await fetch('http://localhost:8000/api/reservations', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(requestData),
+                });
+
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.message || 'Error creating reservation');
+                }
+                setDialogMessage('Reservation created successfully!');
+                setIsDialogOpen(true);
+            } catch (error) {
+                setDialogMessage(`Error creating reservation: ${error.message}`);
+                setIsDialogOpen(true);
+            }
+        };
 
     return (
         <div className="bg-white flex justify-center items-center min-h-screen">
             <div className="max-w-2xl w-full p-8 shadow-lg rounded-lg">
                 <h1 className="text-center text-2xl font-bold mb-6">Reservation Form</h1>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <h2 className="text-lg font-medium text-gray-900">Contact Information</h2>
-
-                    <div className="mt-6">
-                        <label htmlFor="firstname" className="block text-sm font-medium text-gray-700">
-                            First Name
+                <form onSubmit={onSubmit} className="space-y-6">
+                    <div className="flex items-center mb-6">
+                        <input
+                            type="checkbox"
+                            id="bookingForSelf"
+                            checked={bookingForSelf}
+                            onChange={handleBookingModeChange}
+                            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                        />
+                        <label htmlFor="bookingForSelf" className="ml-3 text-sm font-medium text-gray-700">
+                            Booking for yourself
                         </label>
-                        <div className="mt-1">
-                            <input
-                                type="text"
-                                name="firstname"
-                                id="firstname"
-                                value={formData.firstname}
-                                onChange={handleChange}
-                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            />
-                        </div>
                     </div>
 
-                    <div className="mt-6">
-                        <label htmlFor="lastname" className="block text-sm font-medium text-gray-700">
-                            Last Name
-                        </label>
-                        <div className="mt-1">
-                            <input
-                                type="text"
-                                name="lastname"
-                                id="lastname"
-                                value={formData.lastname}
-                                onChange={handleChange}
-                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            />
-                        </div>
-                    </div>
+                    {!bookingForSelf && (
+                        <div className="space-y-6">
+                            <div>
+                                <label htmlFor="firstname" className="block text-sm font-medium text-gray-700">
+                                    First Name
+                                </label>
+                                <input
+                                    type="text"
+                                    name="firstname"
+                                    id="firstname"
+                                    value={formData.firstname}
+                                    onChange={handleChange}
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                />
+                            </div>
 
-                    <div className="mt-6">
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                            Email
-                        </label>
-                        <div className="mt-1">
-                            <input
-                                type="email"
-                                name="email"
-                                id="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            />
-                        </div>
-                    </div>
+                            <div>
+                                <label htmlFor="lastname" className="block text-sm font-medium text-gray-700">
+                                    Last Name
+                                </label>
+                                <input
+                                    type="text"
+                                    name="lastname"
+                                    id="lastname"
+                                    value={formData.lastname}
+                                    onChange={handleChange}
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                />
+                            </div>
 
-                    <div className="mt-6">
-                        <label htmlFor="tel" className="block text-sm font-medium text-gray-700">
-                            Telephone
-                        </label>
-                        <div className="mt-1">
-                            <input
-                                type="tel"
-                                name="tel"
-                                id="tel"
-                                value={formData.tel}
-                                onChange={handleChange}
-                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            />
+                            <div>
+                                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                                    Email
+                                </label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    id="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                />
+                            </div>
+
+                            <div>
+                                <label htmlFor="tel" className="block text-sm font-medium text-gray-700">
+                                    Telephone
+                                </label>
+                                <input
+                                    type="tel"
+                                    name="tel"
+                                    id="tel"
+                                    value={formData.tel}
+                                    onChange={handleChange}
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                />
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <div className="mt-6">
                         <label className="block text-sm font-medium text-gray-700">
@@ -183,32 +264,28 @@ function ReservationForm({ selectedRoomId }) {
                         <label htmlFor="total_price" className="block text-sm font-medium text-gray-700">
                             Total Price
                         </label>
-                        <div className="mt-1">
-                            <input
-                                type="text"
-                                name="total_price"
-                                id="total_price"
-                                value={formData.total_price}
-                                onChange={handleChange}
-                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            />
-                        </div>
+                        <input
+                            type="text"
+                            name="total_price"
+                            id="total_price"
+                            value={formData.total_price}
+                            onChange={handleChange}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        />
                     </div>
 
                     <div className="mt-6">
                         <label htmlFor="discount" className="block text-sm font-medium text-gray-700">
                             Discount
                         </label>
-                        <div className="mt-1">
-                            <input
-                                type="text"
-                                name="discount"
-                                id="discount"
-                                value={formData.discount}
-                                onChange={handleChange}
-                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            />
-                        </div>
+                        <input
+                            type="text"
+                            name="discount"
+                            id="discount"
+                            value={formData.discount}
+                            onChange={handleChange}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        />
                     </div>
 
                     <button
