@@ -18,7 +18,7 @@ export default function ModalAdd() {
 
   const isRoomPage = pathname.includes('admin/listrooms');
   const isRiadPage = pathname.includes('admin/listriads');
-  const isUserPage = pathname.includes('admin/listUsers'); // Check if the current page is a user page
+  const isUserPage = pathname.includes('admin/listusers') || pathname.includes('admin/listadmins') || pathname.includes('admin/listusersarchived');  
 
   return (
     <Transition

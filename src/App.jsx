@@ -24,8 +24,9 @@ import Table from './components/Admin/Room/Roomtable';
 import Unauthorized from './components/Admin/token/Unauthorized';
 import Table2 from './components/Admin/Riad/Riadtable';
 import ProfilePage from './components/Client/ProfileAdmin';
-import ProfileUser from './components/Client/ProfilUser'
-
+import ProfileUser from './components/Client/ProfilUser';
+import ListUsersArchived from './components/Admin/Users/ListUserArchived';
+import ListAdmin from './components/Admin/Users/ListAdmin';
 import './App.css';
 import Test from './components/Test';
 import Test2 from './components/Test2';
@@ -69,6 +70,8 @@ function App() {
               <Route path="/admin/listrooms" element={<ProtectedRoute element={Table} requiredRole="ROLE_ADMIN" />} />
               <Route path="/admin/listriads" element={<ProtectedRoute element={Table2} requiredRole="ROLE_ADMIN" />} />
               <Route path="/admin/listusers" element={<ProtectedRoute element={ListUsers} requiredRole="ROLE_ADMIN" />} />
+              <Route path="/admin/listusersarchived" element={<ProtectedRoute element={ListUsersArchived} requiredRole="ROLE_ADMIN" />} />
+              <Route path="/admin/listadmins" element={<ProtectedRoute element={ListAdmin} requiredRole="ROLE_ADMIN" />} />
               <Route path="/users/:userId" element={<ProtectedRoute element={UserDetail} requiredRole="ROLE_ADMIN" />} />
               <Route path="/edit-user/:userId" element={<ProtectedRoute element={EditUser} requiredRole="ROLE_ADMIN" />} />
               

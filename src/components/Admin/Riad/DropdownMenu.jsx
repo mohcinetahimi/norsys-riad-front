@@ -1,4 +1,5 @@
 import React from 'react';
+import '../../../assets/style/menu.css'
 
 const DropdownMenu = ({ items, onSelect }) => {
   return (
@@ -8,7 +9,7 @@ const DropdownMenu = ({ items, onSelect }) => {
           <button
             key={index}
             onClick={() => onSelect(item)}
-            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+            className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
             role="menuitem"
           >
             {item.label}
@@ -20,4 +21,3 @@ const DropdownMenu = ({ items, onSelect }) => {
 };
 
 export default DropdownMenu;
-  

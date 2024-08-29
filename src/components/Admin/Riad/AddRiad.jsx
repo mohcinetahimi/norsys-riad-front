@@ -19,7 +19,7 @@ const addRiad = async (formData) => {
 
   const response = await axios.post('http://localhost:8000/api/riiads', formData, {
     headers: {
-      'Content-Type': 'multipart/form-data', // Ensure this is set
+      'Content-Type': 'multipart/form-data',
       'Authorization': `Bearer ${token}`,
     },
   });
@@ -33,24 +33,29 @@ const AddRiad = () => {
   });
 
   const queryClient = useQueryClient();
-  const { closeModal } = useOpen(); // Use closeModal from context
-  const { showFlashMessage } = useFlashMessage(); // Use the flash message context
+  const { closeModal } = useOpen();
+  const { showFlashMessage } = useFlashMessage();
   const [selectedFiles, setSelectedFiles] = useState([]);
 
   const mutation = useMutation({
     mutationFn: addRiad,
     onSuccess: () => {
       queryClient.invalidateQueries(['riads']);
-      closeModal('modalAdd'); // Close the modal using context
-      showFlashMessage('Riad added successfully!'); // Show success message
+      closeModal('modalAdd');
+      showFlashMessage('Riad added successfully!');
     },
     onError: (error) => {
       console.error('Adding riad failed:', error);
-      showFlashMessage('Failed to add riad.'); // Show error message
+      showFlashMessage('Failed to add riad.');
     }
   });
 
   const onSubmit = (data) => {
+    if (selectedFiles.length === 0) {
+      showFlashMessage('Please upload at least one image.');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('name', data.name);
     formData.append('description', data.description);
@@ -76,7 +81,6 @@ const AddRiad = () => {
             <p className="mt-1 text-sm leading-6 text-gray-600">Enter the details of the new riad below.</p>
 
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              {/* Form fields here */}
               {/* Name */}
               <div className="sm:col-span-6">
                 <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">Name</label>
@@ -134,6 +138,9 @@ const AddRiad = () => {
                   onChange={handleImageChange}
                   className="mt-2 block w-full px-3 py-1.5 text-gray-900 placeholder:text-gray-400 ring-1 ring-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                 />
+                {selectedFiles.length === 0 && (
+                  <p className="text-red-600">Please upload at least one image.</p>
+                )}
               </div>
             </div>
           </div>
@@ -141,13 +148,14 @@ const AddRiad = () => {
           <div className="mt-6 flex gap-x-4">
             <button
               type="submit"
-              className="inline-block px-3 py-1.5 text-white bg-indigo-600 rounded-md shadow-sm ring-1 ring-gray-300 hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+              disabled={selectedFiles.length === 0} // Disable button if no image
+              className={`inline-block px-3 py-1.5 text-white rounded-md shadow-sm ring-1 ring-gray-300 sm:text-sm ${selectedFiles.length === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-600'}`}
             >
               Add Riad
             </button>
             <button
               type="button"
-              onClick={() => closeModal('modalAdd')} // Close modal
+              onClick={() => closeModal('modalAdd')}
               className="inline-block px-3 py-1.5 text-white bg-gray-600 rounded-md shadow-sm ring-1 ring-gray-300 hover:bg-gray-700 focus:ring-2 focus:ring-gray-600 sm:text-sm"
             >
               Cancel

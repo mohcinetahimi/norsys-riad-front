@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import { Disclosure, Menu, Transition, MenuItems } from '@headlessui/react';
-import { Bars3Icon, XMarkIcon, MagnifyingGlassIcon, UserIcon } from '@heroicons/react/24/outline';
+import { Disclosure, Menu, Transition } from '@headlessui/react';
+import { Bars3Icon, XMarkIcon, UserIcon } from '@heroicons/react/24/outline';
 import { Link as RouterLink } from 'react-router-dom'; // For routing
 import { Link as ScrollLink } from 'react-scroll'; // For scrolling
 import axios from 'axios';
@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import logo from "../../assets/logo.jpg"; // Default logo
 import apiClient from '../Admin/token/configUser';
 
+// Navigation items
 const navigation = [
     { name: 'Home', to: '/', current: true },
     { name: 'About Us', to: 'header', current: false },
@@ -43,32 +44,17 @@ export default function Navbar() {
         }
     };
 
-    // const handleLogout = async () => {
-    //     try {
-    //         await apiClient.post('/logout');
-    //         localStorage.removeItem('token');
-    //         setIsAuthenticated(false);
-    //         setUserData(null);
-    //         navigate('/');
-    //     } catch (error) {
-    //         console.error('Logout failed:', error);
-    //     }
-    // };
-    
     const handleLogout = async () => {
         try {
-            // Validate the token first
-            const response = await axios.post('http://localhost:8000/api/validate-token');
+            const response = await apiClient.post('/validate-token');
             
             if (response.data.valid) {
-                // Token is valid, proceed with logout
                 await apiClient.post('/logout');
                 localStorage.removeItem('token');
                 setIsAuthenticated(false);
                 setUserData(null);
                 navigate('/');
             } else {
-                // Handle invalid token (e.g., expired)
                 localStorage.removeItem('token');
                 if (typeof window.showFlashMessage === 'function') {
                     window.showFlashMessage('Session ended. Please login again.', 'error');
@@ -77,7 +63,6 @@ export default function Navbar() {
             }
         } catch (error) {
             if (error.response && error.response.status === 401) {
-                // Handle 401 error (e.g., token expired)
                 localStorage.removeItem('token');
                 if (typeof window.showFlashMessage === 'function') {
                     window.showFlashMessage('Session ended. Please login again.', 'error');
@@ -88,7 +73,7 @@ export default function Navbar() {
             }
         }
     };
-    
+
     return (
         <Disclosure as="nav" className="bg-white shadow fixed w-full top-0 z-10">
             {({ open }) => (
@@ -97,7 +82,6 @@ export default function Navbar() {
                         <div className="relative flex h-16 items-center justify-between">
                             <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
                                 <Disclosure.Button className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-                                    <span className="absolute -inset-0.5" />
                                     <span className="sr-only">Open main menu</span>
                                     <Bars3Icon className="block h-6 w-6 group-data-[open]:hidden" aria-hidden="true" />
                                     <XMarkIcon className="hidden h-6 w-6 group-data-[open]:block" aria-hidden="true" />
@@ -114,7 +98,7 @@ export default function Navbar() {
                                     </RouterLink>
                                 </div>
                                 <div className="hidden sm:ml-6 sm:block">
-                                    <div className="flex space-x-4">
+                                <div className="flex space-x-4">
                                         {navigation.map((item) => (
                                             item.name === 'Home' ? (
                                                 <RouterLink
@@ -144,23 +128,6 @@ export default function Navbar() {
                                         ))}
                                     </div>
                                 </div>
-                                <div className="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end">
-                                    <div className="w-full max-w-lg lg:max-w-xs">
-                                        <label htmlFor="search" className="sr-only">Search</label>
-                                        <div className="relative">
-                                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                                <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                                            </div>
-                                            <input
-                                                id="search"
-                                                name="search"
-                                                className="block w-full rounded-md border-0 bg-white py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                                placeholder="Search"
-                                                type="search"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                                 {isAuthenticated ? (
@@ -188,7 +155,7 @@ export default function Navbar() {
                                             leaveFrom="transform opacity-100 scale-100"
                                             leaveTo="transform opacity-0 scale-95"
                                         >
-                                            <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                            <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                                 <Menu.Item>
                                                     {({ active }) => (
                                                         <button
@@ -201,7 +168,6 @@ export default function Navbar() {
                                                         </button>
                                                     )}
                                                 </Menu.Item>
-
                                                 <Menu.Item>
                                                     {({ active }) => (
                                                         <RouterLink
@@ -222,20 +188,53 @@ export default function Navbar() {
                                                         </button>
                                                     )}
                                                 </Menu.Item>
-                                            </MenuItems>
+                                            </Menu.Items>
                                         </Transition>
                                     </Menu>
                                 ) : (
                                     <RouterLink
                                         to="/login"
-                                        className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+                                        className="text-white bg-gray-800 hover:bg-black-300 rounded-md px-4 py-1 text-lg font-medium"
                                     >
                                         Login
                                     </RouterLink>
+
                                 )}
                             </div>
                         </div>
                     </div>
+                    <Disclosure.Panel className="sm:hidden">
+    <div className="space-y-1 px-2 pt-2 pb-3">
+        {navigation.map((item) => (
+            item.name === 'Home' ? (
+                <RouterLink
+                    key={item.name}
+                    to={item.to}
+                    className={classNames(
+                        item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                        'cursor-pointer block rounded-md px-3 py-2 text-base font-medium'
+                    )}
+                >
+                    {item.name}
+                </RouterLink>
+            ) : (
+                <ScrollLink
+                    key={item.name}
+                    to={item.to}
+                    smooth={true}
+                    duration={500}
+                    className={classNames(
+                        item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                        'cursor-pointer block rounded-md px-3 py-2 text-base font-medium'
+                    )}
+                >
+                    {item.name}
+                </ScrollLink>
+            )
+        ))}
+    </div>
+</Disclosure.Panel>
+
                 </>
             )}
         </Disclosure>

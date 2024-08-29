@@ -1,39 +1,330 @@
+// import { useState, useEffect } from 'react';
+// import { useForm } from 'react-hook-form';
+// import { yupResolver } from '@hookform/resolvers/yup';
+// import * as yup from 'yup';
+// import apiClient from '../Admin/token/configUser'; // Adjust the path if necessary
+// import { useNavigate } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
+
+// export default function Login() {
+//   const [errorMessage, setErrorMessage] = useState('');
+
+//   const schema = yup.object().shape({
+//     username: yup.string().required('Username is required'),
+//     password: yup.string().required('Password is required'),
+//   });
+
+//   const { register, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
+//   const navigate = useNavigate();
+
+//   // Check if the user is already logged in
+//   useEffect(() => {
+//     const token = localStorage.getItem('token');
+//     if (token) {
+//       navigate('/'); // Redirect to the homepage or any other page if already logged in
+//     }
+//   }, [navigate]);
+
+//   const onSubmit = async (data) => {
+//     try {
+//       if (!data.username || !data.password) {
+//         setErrorMessage('Both username and password are required.');
+//         return;
+//       }
+
+//       const response = await apiClient.post('/login', data);
+
+//       if (response.status === 200 && response.data.token) {
+//         localStorage.setItem('token', response.data.token);
+//         console.log('Login successful', response.data);
+//         navigate('/');
+//       } else {
+//         setErrorMessage('Please check Username and Password and try again.');
+//       }
+//     } catch (error) {
+//       console.error('Login failed', error.response ? error.response.data : error.message);
+//       setErrorMessage(error.response?.data?.error + '\nPlease check Username and Password and try again.');
+//     }
+//   };
+
+//   return (
+//     <>
+//       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+//         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+//           <img
+//             alt="Your Company"
+//             src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+//             className="mx-auto h-10 w-auto"
+//           />
+//           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+//             Sign in to your account
+//           </h2>
+//         </div>
+
+//         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+//           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+//             {errorMessage && (
+//               <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+//                 <strong className="font-bold">Error:</strong>
+//                 <span className="block sm:inline"> {errorMessage}</span>
+//               </div>
+//             )}
+
+//             <div>
+//               <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">
+//                 Username
+//               </label>
+//               <div className="mt-2">
+//                 <input
+//                   type="text"
+//                   name="username"
+//                   id="username"
+//                   autoComplete="username"
+//                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+//                   {...register("username")}
+//                 />
+//                 {errors.username && <p className="mt-2 text-sm text-red-600">{errors.username.message}</p>}
+//               </div>
+//             </div>
+
+//             <div>
+//               <div className="flex items-center justify-between">
+//                 <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+//                   Password
+//                 </label>
+//               </div>
+//               <div className="mt-2">
+//                 <input
+//                   id="password"
+//                   name="password"
+//                   type="password"
+//                   autoComplete="current-password"
+//                   {...register("password")}
+//                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+//                 />
+//                 {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>}
+//               </div>
+//             </div>
+
+//             <div>
+//               <button
+//                 type="submit"
+//                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+//               >
+//                 Sign in
+//               </button>
+//             </div>
+//           </form>
+
+//           <div className="mt-2 text-center text-sm text-gray-500">
+//             <Link to="/forgotPassword" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+//               Forgot password?
+//             </Link>
+//           </div>
+
+//           <div className="mt-10 text-center text-sm text-gray-500">
+//             Not a member?{' '}
+//             <Link to="/register" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+//               Register Now
+//             </Link>
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// }
+
+
+  // import { useState, useEffect } from 'react';
+  // import { useForm } from 'react-hook-form';
+  // import { yupResolver } from '@hookform/resolvers/yup';
+  // import * as yup from 'yup';
+  // import apiClient from '../Admin/token/configUser'; // Adjust the path if necessary
+  // import { useNavigate, Link } from 'react-router-dom';
+  // import Riadpic from '../../assets/abdelhalim-faiz-6xZuPeInEiQ-unsplash.jpg'; // Import the image
+
+  // export default function Login() {
+  //   const [errorMessage, setErrorMessage] = useState('');
+
+  //   // Schema for validation
+  //   const schema = yup.object().shape({
+  //     username: yup.string().required('Username is required'),
+  //     password: yup.string().required('Password is required'),
+  //   });
+
+  //   // Hook form integration
+  //   const { register, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
+  //   const navigate = useNavigate();
+
+  //   useEffect(() => {
+  //     const token = localStorage.getItem('token');
+  //     if (token) {
+  //       navigate('/');
+  //     }
+  //   }, [navigate]);
+
+  //   const onSubmit = async (data) => {
+  //     try {
+  //       // Input validation
+  //       if (!data.username || !data.password) {
+  //         setErrorMessage('Both username and password are required.');
+  //         return;
+  //       }
+
+  //       const response = await apiClient.post('/login', data);
+
+  //       // Successful login
+  //       if (response.status === 200 && response.data.token) {
+  //         localStorage.setItem('token', response.data.token);
+  //         console.log('Login successful', response.data);
+  //         navigate('/');
+  //       } else {
+  //         setErrorMessage('Please check Username and Password and try again.');
+  //       }
+  //     } catch (error) {
+  //       console.error('Login failed', error.response ? error.response.data : error.message);
+  //       setErrorMessage(error.response?.data?.error + '\nPlease check Username and Password and try again.');
+  //     }
+  //   };
+
+  //   return (
+  //     <div
+  //       className="flex min-h-screen items-center justify-center bg-cover bg-center"
+  //       style={{ backgroundImage: `url(${Riadpic})` }} // Set the image as background
+  //     >
+  //       <div className="backdrop-blur-sm rounded-lg shadow-lg p-8 sm:max-w-sm w-full">
+  //         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+  //           <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+  //             Sign in to your account
+  //           </h2>
+  //         </div>
+
+  //         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+  //           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+  //             {errorMessage && (
+  //               <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+  //                 <strong className="font-bold">Error:</strong>
+  //                 <span className="block sm:inline"> {errorMessage}</span>
+  //               </div>
+  //             )}
+
+  //             <div>
+  //               <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">
+  //                 Username
+  //               </label>
+  //               <div className="mt-2">
+  //                 <input
+  //                   type="text"
+  //                   name="username"
+  //                   id="username"
+  //                   autoComplete="username"
+  //                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+  //                   {...register("username")}
+  //                 />
+  //                 {errors.username && <p className="mt-2 text-sm text-red-600">{errors.username.message}</p>}
+  //               </div>
+  //             </div>
+
+  //             <div>
+  //               <div className="flex items-center justify-between">
+  //                 <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+  //                   Password
+  //                 </label>
+  //               </div>
+  //               <div className="mt-2">
+  //                 <input
+  //                   id="password"
+  //                   name="password"
+  //                   type="password"
+  //                   autoComplete="current-password"
+  //                   {...register("password")}
+  //                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+  //                 />
+  //                 {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>}
+  //               </div>
+  //             </div>
+
+  //             <div>
+  //             <button
+  //   type="submit"
+  //   className="flex w-full justify-center rounded-md bg-black px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+  // >
+  //   Sign in
+  // </button>
+
+  //             </div>
+  //           </form>
+
+  //           <div className="mt-2 text-center text-sm text-gray-500">
+  //   <Link
+  //     to="/forgotPassword"
+  //     className="font-semibold leading-6 text-black hover:text-gray-700"
+  //   >
+  //     Forgot password?
+  //   </Link>
+  // </div>
+
+
+  // <div className="mt-10 text-center text-sm text-gray-500">
+  //   Not a member?{' '}
+  //   <Link
+  //     to="/register"
+  //     className="font-semibold leading-6 text-black hover:text-gray-700"
+  //   >
+  //     Register Now
+  //   </Link>
+  // </div>
+
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
+
+
+
+
+
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import apiClient from '../Admin/token/configUser'; // Adjust the path if necessary
+import { useNavigate, Link } from 'react-router-dom';
+import Riadpic from '../../assets/abdelhalim-faiz-6xZuPeInEiQ-unsplash.jpg'; // Import the image
 
 export default function Login() {
   const [errorMessage, setErrorMessage] = useState('');
 
+  // Schema for validation
   const schema = yup.object().shape({
     username: yup.string().required('Username is required'),
     password: yup.string().required('Password is required'),
   });
 
+  // Hook form integration
   const { register, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
   const navigate = useNavigate();
 
-  // Check if the user is already logged in
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      navigate('/'); // Redirect to the homepage or any other page if already logged in
+      navigate('/');
     }
   }, [navigate]);
 
   const onSubmit = async (data) => {
     try {
+      // Input validation
       if (!data.username || !data.password) {
         setErrorMessage('Both username and password are required.');
         return;
       }
 
-      const response = await axios.post('http://localhost:8000/api/login', data);
+      const response = await apiClient.post('/login', data);
 
+      // Successful login
       if (response.status === 200 && response.data.token) {
         localStorage.setItem('token', response.data.token);
         console.log('Login successful', response.data);
@@ -48,15 +339,13 @@ export default function Login() {
   };
 
   return (
-    <>
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img
-            alt="Your Company"
-            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-            className="mx-auto h-10 w-auto"
-          />
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+    <div
+      className="flex min-h-screen items-center justify-center bg-cover bg-center"
+      style={{ backgroundImage: `url(${Riadpic})` }} // Set the image as background
+    >
+  <div className="backdrop-blur-sm rounded-lg shadow-lg p-8 sm:max-w-sm w-full">        
+    <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+          <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-[#4A2C2A]">
             Sign in to your account
           </h2>
         </div>
@@ -71,7 +360,7 @@ export default function Login() {
             )}
 
             <div>
-              <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">
+              <label htmlFor="username" className="block text-sm font-medium leading-6 text-[#4A2C2A]">
                 Username
               </label>
               <div className="mt-2">
@@ -80,7 +369,7 @@ export default function Login() {
                   name="username"
                   id="username"
                   autoComplete="username"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 text-[#4A2C2A] shadow-sm ring-1 ring-inset ring-[#D8A79F] placeholder:text-[#D8A79F] focus:ring-2 focus:ring-inset focus:ring-[#A65B3E] sm:text-sm sm:leading-6"
                   {...register("username")}
                 />
                 {errors.username && <p className="mt-2 text-sm text-red-600">{errors.username.message}</p>}
@@ -89,7 +378,7 @@ export default function Login() {
 
             <div>
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+                <label htmlFor="password" className="block text-sm font-medium leading-6 text-[#4A2C2A]">
                   Password
                 </label>
               </div>
@@ -100,7 +389,7 @@ export default function Login() {
                   type="password"
                   autoComplete="current-password"
                   {...register("password")}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 text-[#4A2C2A] shadow-sm ring-1 ring-inset ring-[#D8A79F] placeholder:text-[#D8A79F] focus:ring-2 focus:ring-inset focus:ring-[#A65B3E] sm:text-sm sm:leading-6"
                 />
                 {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>}
               </div>
@@ -109,27 +398,35 @@ export default function Login() {
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex w-full justify-center rounded-md bg-[#A65B3E] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#8F4C3B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A65B3E]"
               >
                 Sign in
               </button>
             </div>
           </form>
 
-          <div className="mt-2 text-center text-sm text-gray-500">
-            <Link to="/forgotPassword" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+          <div className="mt-2 text-center text-sm text-black">
+            <Link
+              to="/forgotPassword"
+              className="font-semibold leading-6 text-black hover:text-gray-700"
+            >
               Forgot password?
             </Link>
           </div>
 
-          <div className="mt-10 text-center text-sm text-gray-500">
+          <div className="mt-10 text-center text-sm text-black">
             Not a member?{' '}
-            <Link to="/register" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+            <Link
+              to="/register"
+              className="font-semibold leading-6 text-black hover:text-gray-700"
+            >
               Register Now
             </Link>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
+
+

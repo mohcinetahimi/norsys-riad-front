@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import '../assets/style/flashmessage.css'
 
 // Create the FlashMessageContext
 export const FlashMessageContext = createContext();
@@ -38,7 +39,7 @@ export const FlashMessageProvider = ({ children }) => {
       {message && (
         <div
           className={`fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded shadow-md ${
-            type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+            type === 'success' ? 'bg-blue-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'
           } text-white`}
           role="alert"
           aria-live="assertive"

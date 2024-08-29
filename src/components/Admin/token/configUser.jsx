@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { useContext } from 'react';
 import { FlashMessageContext } from '../../../contexts/FlashMessageContext';
+import { useFlashMessage } from '../../../contexts/FlashMessageContext'; // Adjust the path if necessary
+
 
 // Create an Axios instance
 const apiClient = axios.create({
@@ -31,17 +33,13 @@ apiClient.interceptors.response.use(response => {
             // Handle token expiration logic
             localStorage.removeItem('token');
             
-            // Use showFlashMessage function to display the flash message
-            // Since we're in a non-component context, we cannot use useContext here.
-            // Instead, use the global window.showFlashMessage that you exposed earlier.
+             // Use FlashMessageProvider's context to trigger flash message
+            const { showFlashMessage } = useFlashMessage();
+            showFlashMessage('Session expired. Please log in again.', 'error');
 
-            if (typeof window.showFlashMessage === 'function') {
-                window.showFlashMessage('Session has expired. Please log in again.', 'error');
-            }
-
-            // Redirect to login page
+                // Redirect to login page
             window.location.href = '/login';
-        }
+            }
     }
     return Promise.reject(error);
 });

@@ -10,9 +10,19 @@ import { useFlashMessage } from '../../../contexts/FlashMessageContext'; // Adju
 const schema = yup.object().shape({
   name: yup.string().required('Name is required').max(100),
   description: yup.string().required('Description is required').max(500),
-  nb_personne: yup.number().required('Number of people is required').positive().integer(),
-  price: yup.number().required('Price is required').positive(),
+  nb_personne: yup
+    .number()
+    .transform((value) => (isNaN(value) ? undefined : value)) // Convert NaN to undefined
+    .required('Number of people is required')
+    .positive('Number of people must be positive')
+    .integer('Number of people must be an integer'),
+  price: yup
+    .number()
+    .transform((value) => (isNaN(value) ? undefined : value)) // Convert NaN to undefined
+    .required('Price is required')
+    .positive('Price must be positive'),
 });
+
 
 const addRoom = async ({ formData }) => {
   const token = localStorage.getItem('token_admin');

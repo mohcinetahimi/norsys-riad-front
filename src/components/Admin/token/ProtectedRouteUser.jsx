@@ -12,6 +12,13 @@ const ProtectedRoute = ({ element: Component, requiredRole, ...rest }) => {
 
   useEffect(() => {
     const checkTokenValidity = async () => {
+
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        navigate('/login');
+        return;
+      }
       try {
         const response = await apiClient.post('/validate-token', { admin: false });
 
@@ -24,12 +31,12 @@ const ProtectedRoute = ({ element: Component, requiredRole, ...rest }) => {
           if (error.response.data.message === 'Expired JWT Token') {
             showFlashMessage('Your session has expired. Please log in again.');
           } else {
-            showFlashMessage('Unauthorized access.');
+            showFlashMessage('Your session has expired. Please log in again.');
           }
           setIsValid(false);
         } else {
-          console.error('Token validation failed:', error);
-          showFlashMessage('An error occurred while validating the token.');
+          
+          showFlashMessage('Your session has expired. Please log in again.');
           setIsValid(false);
           navigate('/login');
         }

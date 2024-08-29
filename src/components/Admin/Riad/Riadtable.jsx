@@ -170,9 +170,12 @@
 //   );
 // };
 
-// export default Table;
-import React, { useContext, useState, useEffect } from 'react';
+// export default Table;import React, { useContext, useState, useEffect } from 'react';
+
+
+
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import React, { useContext, useState, useEffect } from 'react';
 import axiosInstance from '../token/config';
 import { OpenContext } from '../../../contexts/OpenContext';
 import { useFlashMessage } from '../../../contexts/FlashMessageContext';
@@ -185,8 +188,8 @@ import DropdownMenu from './DropdownMenu';
 import Navbar from '../Navbar/navbar';
 import '../../../assets/style/loading.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import ConfirmationModal from '../../../contexts/ConfirmationModal';
 
-// Fetch riads data
 const fetchRiads = async () => {
   const { data } = await axiosInstance.get('/riads');
   return data;
@@ -199,6 +202,7 @@ const Table = () => {
   const [search, setSearch] = useState('');
   const [filteredRiads, setFilteredRiads] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(null);
+  const [riadToDelete, setRiadToDelete] = useState(null);
 
   const { data: riads = {}, error, isLoading } = useQuery({
     queryKey: ['riads'],
@@ -214,6 +218,11 @@ const Table = () => {
   }, [search, riads]);
 
   const deleteRiad = async (id) => {
+    setRiadToDelete(id);
+    openModal('confirmationModal');
+  };
+
+  const handleConfirmdeleteRiad = async (id) => {
     try {
       await axiosInstance.delete(`/riads/${id}`);
       queryClient.invalidateQueries(['riads']);
@@ -222,6 +231,11 @@ const Table = () => {
       console.error("Error deleting the riad:", error);
       showFlashMessage('Failed to delete the riad. Please try again.');
     }
+    setRiadToDelete(null);
+  };
+
+  const handleCancelDelete = () => {
+    setRiadToDelete(null);
   };
 
   const toggleDropdown = (id) => {
@@ -260,9 +274,6 @@ const Table = () => {
             <ModalAdd />
           </div>
         </div>
-
-        <p className="mt-2 text-sm text-gray-700">A table of Riads.</p>
-
         <div className="mt-8 flow-root">
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -298,26 +309,30 @@ const Table = () => {
                               Options
                             </button>
                             {dropdownOpen === riad.id && (
-                              <DropdownMenu
-                                items={[
-                                  { label: 'Edit', action: () => openModal(`modalEdit_${riad.id}`) },
-                                  { label: 'Delete', action: () => deleteRiad(riad.id) },
-                                  { label: 'Add Room', action: () => openModal(`modalManageRooms_${riad.id}`) },
-                                  { label: 'View Rooms', action: () => openModal(`modalRooms_${riad.id}`) },
-                                  { 
-                                    label: 'View Riad Images', 
-                                    action: () => openModal(`modalImages_${riad.id}`) 
-                                  }
-                                ]}
-                                onSelect={(item) => item.action()}
-                              />
+                             <DropdownMenu
+                             items={[
+                               { label: 'Edit', action: () => { openModal(`modalEdit_${riad.id}`); toggleDropdown(null); }},
+                               { label: 'Delete', action: () => { deleteRiad(riad.id); toggleDropdown(null); }},
+                               { label: 'Add Room', action: () => { openModal(`modalManageRooms_${riad.id}`); toggleDropdown(null); }},
+                               { label: 'View Rooms', action: () => { openModal(`modalRooms_${riad.id}`); toggleDropdown(null); }},
+                               { 
+                                 label: 'View Riad Images', 
+                                 action: () => { openModal(`modalImages_${riad.id}`); toggleDropdown(null); }
+                               }
+                             ]}
+                             onSelect={(item) => {
+                               item.action();
+                               toggleDropdown(null); // Close the dropdown
+                             }}
+                           />
+                           
                             )}
                           </td>
                         </tr>
                         {modals[`modalManageRooms_${riad.id}`] && <AddRoomModal riadId={riad.id} />}
                         {modals[`modalRooms_${riad.id}`] && <RoomsModal riadId={riad.id} onClose={() => closeModal(`modalRooms_${riad.id}`)} />}
-                        {modals[`modalEdit_${riad.id}`] && <ModalEdit key={`modalEdit_${riad.id}_${Date.now()}`} riadId={riad.id} defaultOpen={true} />}
-                        {modals[`modalImages_${riad.id}`] && <ModalImages riadId={riad.id} defaultOpen={true} />}  {/* Pass defaultOpen */}
+                        {modals[`modalEdit_${riad.id}`] && <ModalEdit riadId={riad.id} />}
+                        {modals[`modalImages_${riad.id}`] && <ModalImages riadId={riad.id} />}
                       </React.Fragment>
                     ))}
                   </tbody>
@@ -327,8 +342,17 @@ const Table = () => {
           </div>
         </div>
       </div>
+
+      {modals['confirmationModal'] && (
+        <ConfirmationModal
+          message="Are you sure you want to delete this riad?"
+          onConfirm={() => handleConfirmdeleteRiad(riadToDelete)} // Pass riadToDelete as an argument
+          onCancel={handleCancelDelete}
+        />
+      )}
     </>
   );
 };
 
 export default Table;
+
