@@ -2,7 +2,7 @@ import { useState } from 'react';
 import * as Yup from 'yup';
 import React from 'react';
 import clsx from 'clsx';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 import { useFormik } from 'formik';
 import axios from 'axios';
 
@@ -36,6 +36,7 @@ export function ForgotPassword() {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
   const formik = useFormik({
     initialValues,
@@ -62,6 +63,11 @@ export function ForgotPassword() {
         });
     },
   });
+
+  // Function to handle cancel button click
+  const handleCancel = () => {
+    navigate('/Login'); // Redirect to login page
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -121,15 +127,13 @@ export function ForgotPassword() {
                 'Submit'
               )}
             </button>
-            <Link to="/Login">
-              <button
-                type="button"
-                className="bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 ml-4"
-                disabled={formik.isSubmitting || !formik.isValid}
-              >
-                Cancel
-              </button>
-            </Link>
+            <button
+              type="button"
+              onClick={handleCancel} // Handle click event for cancel
+              className="bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 ml-4"
+            >
+              Cancel
+            </button>
           </div>
         </form>
       </div>

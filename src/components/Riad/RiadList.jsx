@@ -26,7 +26,7 @@ export default function RiadList() {
     if (error) return <div className="text-red-500 text-center">{error}</div>;
 
     return (
-        <div className="max-w-screen-xl mx-auto px-4 py-16">
+        <div className="max-w-screen-xl mx-auto px-4 py-16" id="riads">
             <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 mb-10 text-center">
                 Selection of Riads
             </h2>

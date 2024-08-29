@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import Navbar from '../../Navbar/navbar';
+import Navbar from '../Navbar/navbar';
 
 const UserDetail = () => {
     const { userId } = useParams();

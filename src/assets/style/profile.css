@@ -1,0 +1,35 @@
+.relative {
+    position: relative;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.mt-2 {
+    margin-top: 0.5rem; /* Adjust spacing as needed */
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.bg-white {
+    background-color: white;
+}
+
+.shadow-lg {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.p-2 {
+    padding: 0.5rem;
+}
+
+.rounded {
+    border-radius: 0.25rem;
+}

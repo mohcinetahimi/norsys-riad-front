@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../../Navbar/navbar';
+import Navbar from '../Navbar/navbar';
 
 const ListRooms = () => {
     const [rooms, setRooms] = useState([]);

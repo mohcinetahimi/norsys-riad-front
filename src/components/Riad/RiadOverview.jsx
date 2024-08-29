@@ -99,8 +99,7 @@ export default function RiadOverview() {
                 </nav>
 
                 {/* Image gallery */}
-                <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:gap-x-8 lg:px-8">
-                    {/* Main Image (Visible on large screens) */}
+                {/* <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:gap-x-8 lg:px-8">
                     <div className="aspect-h-4 aspect-w-3 hidden overflow-hidden rounded-lg lg:block">
                         <img
                             alt={images[0].imageName || 'Riad Image'}
@@ -109,7 +108,6 @@ export default function RiadOverview() {
                         />
                     </div>
 
-                    {/* Secondary Images (Visible on large screens) */}
                     <div className="hidden lg:grid lg:grid-cols-1 lg:gap-y-8">
                         {images.slice(1, 3).map((image, index) => (
                             <div key={index} className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg">
@@ -122,7 +120,6 @@ export default function RiadOverview() {
                         ))}
                     </div>
 
-                    {/* Additional Image (Visible on large screens) */}
                     {images.length > 3 && (
                         <div className="aspect-h-5 aspect-w-4 lg:aspect-h-4 lg:aspect-w-3 sm:overflow-hidden sm:rounded-lg">
                             <img
@@ -131,8 +128,24 @@ export default function RiadOverview() {
                                 className="h-full w-full object-cover object-center"
                             />
                         </div>
-                    )}
+                    )}      
+                </div> */}
+                {/* Image gallery */}
+                <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:max-w-7xl lg:px-8">
+                    {/* Grid for images */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {images.map((image, index) => (
+                            <div key={index} className="aspect-w-3 aspect-h-2 overflow-hidden rounded-lg">
+                                <img
+                                    alt={image.imageName || 'Riad Image'}
+                                    src={image.imageUrl ? `${BASE_URL}${image.imageUrl}` : '/default-image.jpg'}
+                                    className="h-full w-full object-cover object-center"
+                                />
+                            </div>
+                        ))}
+                    </div>
                 </div>
+
 
                 {/* Riad info */}
                 <div className="mx-auto max-w-2xl px-4 pb-16 pt-10 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8 lg:px-8 lg:pb-24 lg:pt-16">

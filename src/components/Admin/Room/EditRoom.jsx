@@ -4,7 +4,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import * as yup from 'yup';
-import axiosInstance from '../token/config'
+import axiosInstance from '../token/config';
+import { useFlashMessage } from '../../../contexts/FlashMessageContext'; // Import the hook
+
 
 
 const schema = yup.object().shape({
@@ -36,6 +38,8 @@ const EditRoom = ({ roomId, onClose }) => {
   });
 
   const queryClient = useQueryClient();
+  const { showFlashMessage } = useFlashMessage(); // Use flash message context
+
 
   useEffect(() => {
     const fetchRoom = async () => {
@@ -56,6 +60,8 @@ const EditRoom = ({ roomId, onClose }) => {
     mutationFn: editRoom,
     onSuccess: () => {
       queryClient.invalidateQueries(['rooms']);
+      showFlashMessage('Room updated successfully!', 'success'); // Show success message
+
       onClose();
     },
     onError: (error) => {
